@@ -15,9 +15,9 @@ interface Particle {
 
 const PARTICLE_COUNT = 700;
 const DOT_COLOR = [77, 188, 27];
-const REPULSION_RADIUS = 270;
-const REPULSION_STRENGTH = 80;
-const ANIMATION_SPEED = 0.10;
+const REPULSION_RADIUS = 450;
+const REPULSION_STRENGTH = 100;
+const ANIMATION_SPEED = 0.35;
 
 export default function InteractiveDotGrid() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -40,7 +40,7 @@ export default function InteractiveDotGrid() {
                 y,
                 targetX: x,
                 targetY: y,
-                size: Math.random() * 1.2 + 0.6,
+                size: Math.random() * 1.1 + 0.5,
                 alpha: Math.random() * 0.02 + 0.01,
             });
         }
@@ -72,13 +72,21 @@ export default function InteractiveDotGrid() {
             mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
         };
 
+        let time = 0;
+
         const animate = () => {
             const w = sizeRef.current.w;
             const h = sizeRef.current.h;
             ctx.clearRect(0, 0, w, h);
+            time += 0.008;
 
             const mx = mouseRef.current.x;
             const my = mouseRef.current.y;
+
+            // Fluid pulse sphere — slowly orbits around the canvas
+            const pulseX = w * 0.5 + Math.sin(time) * w * 0.35;
+            const pulseY = h * 0.5 + Math.cos(time * 0.7) * h * 0.3;
+            const pulseRadius = 200 + Math.sin(time * 2) * 50;
 
             particlesRef.current.forEach((p) => {
                 const dx = p.baseX - mx;
@@ -99,11 +107,19 @@ export default function InteractiveDotGrid() {
                 p.x += (p.targetX - p.x) * ANIMATION_SPEED;
                 p.y += (p.targetY - p.y) * ANIMATION_SPEED;
 
+                // Distance from the moving pulse sphere
+                const pulseDx = p.x - pulseX;
+                const pulseDy = p.y - pulseY;
+                const pulseDist = Math.sqrt(pulseDx * pulseDx + pulseDy * pulseDy);
+                const pulseGlow = Math.max(0, 1 - pulseDist / pulseRadius);
+                const pulseIntensity = pulseGlow * pulseGlow * 0.4;
+
+                // Mouse proximity
                 const distFromMouse = Math.sqrt((p.x - mx) ** 2 + (p.y - my) ** 2);
                 const proximity = Math.max(0, 1 - distFromMouse / REPULSION_RADIUS);
 
-                const scale = 1 + proximity * 2;
-                const alpha = p.alpha + proximity * 0.75;
+                const scale = 1 + proximity * 2 + pulseIntensity * 1.5;
+                const alpha = p.alpha + proximity * 0.75 + pulseIntensity;
 
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size * scale, 0, Math.PI * 2);

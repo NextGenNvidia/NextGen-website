@@ -38,7 +38,7 @@ export default function ClusterCarousel() {
             >
                 <h2 className="text-3xl md:text-5xl font-black tracking-tight">
                     <span className="text-white">MEET THE </span>
-                    <span className="text-[#4ade80] text-glow">CLUSTER</span>
+                    <span className="text-[#4DBC1B] text-glow">CLUSTER</span>
                 </h2>
             </motion.div>
 
@@ -62,20 +62,20 @@ export default function ClusterCarousel() {
                                         animate={{ opacity: isCenterCard ? 1 : 0.6, scale: isCenterCard ? 1 : 0.92 }}
                                         exit={{ opacity: 0, scale: 0.8 }}
                                         transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                                        className={`relative rounded-xl border ${isCenterCard ? "border-[#4ade80]/40" : "border-[#4ade80]/15"} bg-[#0a0a0a] overflow-hidden`}
+                                        className={`relative rounded-xl border ${isCenterCard ? "border-[#4DBC1B]/40" : "border-[#4DBC1B]/15"} bg-[#0a0a0a] overflow-hidden`}
                                         style={{
                                             aspectRatio: "16/10",
-                                            boxShadow: isCenterCard ? "0 0 30px rgba(74, 222, 128, 0.15)" : "none",
+                                            boxShadow: isCenterCard ? "0 0 30px rgba(77, 188, 27, 0.15)" : "none",
                                         }}
                                     >
-                                        <div className="absolute top-0 left-0 w-10 h-10 border-t border-l border-[#4ade80]/30 rounded-tl-xl" />
-                                        <div className="absolute top-0 right-0 w-10 h-10 border-t border-r border-[#4ade80]/30 rounded-tr-xl" />
-                                        <div className="absolute bottom-0 left-0 w-10 h-10 border-b border-l border-[#4ade80]/30 rounded-bl-xl" />
-                                        <div className="absolute bottom-0 right-0 w-10 h-10 border-b border-r border-[#4ade80]/30 rounded-br-xl" />
+                                        <div className="absolute top-0 left-0 w-10 h-10 border-t border-l border-[#4DBC1B]/30 rounded-tl-xl" />
+                                        <div className="absolute top-0 right-0 w-10 h-10 border-t border-r border-[#4DBC1B]/30 rounded-tr-xl" />
+                                        <div className="absolute bottom-0 left-0 w-10 h-10 border-b border-l border-[#4DBC1B]/30 rounded-bl-xl" />
+                                        <div className="absolute bottom-0 right-0 w-10 h-10 border-b border-r border-[#4DBC1B]/30 rounded-br-xl" />
                                         <div
                                             className="absolute inset-0 opacity-[0.03]"
                                             style={{
-                                                backgroundImage: "linear-gradient(rgba(74,222,128,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(74,222,128,0.5) 1px, transparent 1px)",
+                                                backgroundImage: "linear-gradient(rgba(77,188,27,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(77,188,27,0.5) 1px, transparent 1px)",
                                                 backgroundSize: "30px 30px",
                                             }}
                                         />
@@ -95,7 +95,7 @@ export default function ClusterCarousel() {
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={prev}
-                                className="w-10 h-10 rounded-full border border-[#4ade80]/30 flex items-center justify-center text-[#4ade80] hover:bg-[#4ade80]/10 transition-colors magnetic-item"
+                                className="w-10 h-10 rounded-full border border-[#4DBC1B]/30 flex items-center justify-center text-[#4DBC1B] hover:bg-[#4DBC1B]/10 transition-colors magnetic-item"
                             >
                                 <ChevronLeft className="w-5 h-5" />
                             </motion.button>
@@ -103,7 +103,7 @@ export default function ClusterCarousel() {
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={next}
-                                className="w-10 h-10 rounded-full border border-[#4ade80]/30 flex items-center justify-center text-[#4ade80] hover:bg-[#4ade80]/10 transition-colors magnetic-item"
+                                className="w-10 h-10 rounded-full border border-[#4DBC1B]/30 flex items-center justify-center text-[#4DBC1B] hover:bg-[#4DBC1B]/10 transition-colors magnetic-item"
                             >
                                 <ChevronRight className="w-5 h-5" />
                             </motion.button>

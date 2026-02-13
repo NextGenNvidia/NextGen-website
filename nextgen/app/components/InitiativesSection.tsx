@@ -32,7 +32,7 @@ export default function InitiativesSection() {
             >
                 <h2 className="text-3xl md:text-5xl font-black tracking-tight">
                     <span className="text-white">WHAT WE&apos;RE </span>
-                    <span className="text-[#4ade80] text-glow">WORKING ON</span>
+                    <span className="text-[#4DBC1B] text-glow">WORKING ON</span>
                 </h2>
             </motion.div>
 
@@ -55,19 +55,19 @@ export default function InitiativesSection() {
 
                             <div className="flex-1 w-full">
                                 <motion.div
-                                    whileHover={{ scale: 1.02, boxShadow: "0 0 40px rgba(74, 222, 128, 0.2)" }}
+                                    whileHover={{ scale: 1.02, boxShadow: "0 0 40px rgba(77, 188, 27, 0.2)" }}
                                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                    className="relative rounded-xl border border-[#4ade80]/20 bg-[#0a0a0a] overflow-hidden magnetic-item"
+                                    className="relative rounded-xl border border-[#4DBC1B]/20 bg-[#0a0a0a] overflow-hidden magnetic-item"
                                     style={{ aspectRatio: "16/10" }}
                                 >
-                                    <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-[#4ade80]/40 rounded-tl-xl" />
-                                    <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-[#4ade80]/40 rounded-tr-xl" />
-                                    <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-[#4ade80]/40 rounded-bl-xl" />
-                                    <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-[#4ade80]/40 rounded-br-xl" />
+                                    <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-[#4DBC1B]/40 rounded-tl-xl" />
+                                    <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-[#4DBC1B]/40 rounded-tr-xl" />
+                                    <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-[#4DBC1B]/40 rounded-bl-xl" />
+                                    <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-[#4DBC1B]/40 rounded-br-xl" />
                                     <div
                                         className="absolute inset-0 opacity-[0.03]"
                                         style={{
-                                            backgroundImage: "linear-gradient(rgba(74,222,128,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(74,222,128,0.5) 1px, transparent 1px)",
+                                            backgroundImage: "linear-gradient(rgba(77,188,27,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(77,188,27,0.5) 1px, transparent 1px)",
                                             backgroundSize: "30px 30px",
                                         }}
                                     />

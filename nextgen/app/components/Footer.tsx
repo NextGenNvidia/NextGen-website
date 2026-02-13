@@ -28,7 +28,7 @@ export default function Footer() {
                             <span className="text-white">Experience power</span>
                             <br />
                             <span className="text-white">like </span>
-                            <span className="text-[#4ade80] text-glow">NEVER BEFORE</span>
+                            <span className="text-[#4DBC1B] text-glow">NEVER BEFORE</span>
                         </h2>
                     </motion.div>
 
@@ -51,7 +51,7 @@ export default function Footer() {
                                 >
                                     <Link
                                         href={link.href}
-                                        className="text-gray-400 hover:text-[#4ade80] transition-colors text-sm nav-link-animated magnetic-item"
+                                        className="text-gray-400 hover:text-[#4DBC1B] transition-colors text-sm nav-link-animated magnetic-item"
                                     >
                                         {link.label}
                                     </Link>
@@ -71,14 +71,14 @@ export default function Footer() {
                 className="text-center mb-16"
             >
                 <h3 className="text-4xl md:text-7xl lg:text-8xl font-black tracking-tight">
-                    <span className="text-[#4ade80]">NEXTGEN</span>{" "}
+                    <span className="text-[#4DBC1B]">NEXTGEN</span>{" "}
                     <span className="text-white">SuperComputing</span>
                 </h3>
             </motion.div>
 
             {/* Divider */}
             <div className="max-w-6xl mx-auto">
-                <div className="h-px bg-gradient-to-r from-transparent via-[#4ade80]/20 to-transparent mb-6" />
+                <div className="h-px bg-gradient-to-r from-transparent via-[#4DBC1B]/20 to-transparent mb-6" />
 
                 {/* Bottom Bar */}
                 <div className="flex items-center justify-between">
@@ -89,7 +89,7 @@ export default function Footer() {
                         viewport={{ once: true }}
                     >
                         <span className="text-xs text-gray-600">
-                            <span className="text-[#4ade80]/60">NEXTGEN</span>{" "}
+                            <span className="text-[#4DBC1B]/60">NEXTGEN</span>{" "}
                             <span className="text-gray-600">SuperComputing</span>
                         </span>
                     </motion.div>

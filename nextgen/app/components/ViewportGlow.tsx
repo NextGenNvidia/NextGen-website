@@ -12,7 +12,7 @@ export default function ViewportGlow() {
                 className="absolute top-0 left-0 right-0 h-[200px]"
                 style={{
                     background:
-                        "radial-gradient(ellipse 80% 100% at 50% 0%, rgba(74,222,128,0.12) 0%, transparent 70%)",
+                        "radial-gradient(ellipse 80% 100% at 50% 0%, rgba(77,188,27,0.12) 0%, transparent 70%)",
                 }}
             />
             {/* Bottom glow */}
@@ -32,7 +32,7 @@ export default function ViewportGlow() {
                 className="absolute top-0 bottom-0 left-0 w-[200px]"
                 style={{
                     background:
-                        "radial-gradient(ellipse 100% 60% at 0% 50%, rgba(74,222,128,0.08) 0%, transparent 70%)",
+                        "radial-gradient(ellipse 100% 60% at 0% 50%, rgba(77,188,27,0.08) 0%, transparent 70%)",
                 }}
             />
             {/* Right glow */}

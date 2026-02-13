@@ -24,10 +24,10 @@ export default function AboutUs() {
 
     const { scrollYProgress } = useScroll({
         target: sectionRef,
-        offset: ["start end", "end start"],
+        offset: ["start 0.1", "end 0.1"],
     });
 
-    const progress = useTransform(scrollYProgress, [0.1, 0.85], [0, 1]);
+    const progress = useTransform(scrollYProgress, [0, 0.8], [0, 1]);
 
     useEffect(() => {
         if (pathRef.current) {
@@ -48,6 +48,7 @@ export default function AboutUs() {
 
     return (
         <section
+            id="about"
             ref={sectionRef}
             className="relative bg-black py-24 md:py-32 px-4 md:px-8 overflow-hidden"
         >
@@ -63,7 +64,7 @@ export default function AboutUs() {
                     className="text-6xl md:text-[10rem] font-black tracking-tighter leading-none text-center"
                 >
                     <span className="text-white">ABOUT </span>
-                    <span className="text-[#4ade80] text-glow">US</span>
+                    <span className="text-[#4DBC1B] text-glow">US</span>
                 </motion.h2>
             </div>
 
@@ -102,7 +103,7 @@ export default function AboutUs() {
                 >
                     <path
                         d={TIMELINE_PATH}
-                        stroke="rgba(74, 222, 128, 0.08)"
+                        stroke="rgba(77, 188, 27, 0.08)"
                         strokeWidth="2"
                         strokeLinecap="round"
                         fill="none"
@@ -120,7 +121,7 @@ export default function AboutUs() {
 
                     {dotPositions.map((pos, i) => (
                         <g key={milestones[i].label}>
-                            <circle cx={pos.x} cy={pos.y} r="6" fill="#4ade80" opacity="0.15">
+                            <circle cx={pos.x} cy={pos.y} r="6" fill="#4DBC1B" opacity="0.15">
                                 <animate
                                     attributeName="r"
                                     values="6;14;6"
@@ -138,7 +139,7 @@ export default function AboutUs() {
                                 cx={pos.x}
                                 cy={pos.y}
                                 r="4"
-                                fill="#4ade80"
+                                fill="#4DBC1B"
                                 filter="url(#dotGlow)"
                             />
                         </g>
@@ -146,9 +147,9 @@ export default function AboutUs() {
 
                     <defs>
                         <linearGradient id="timelineGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#4ade80" />
+                            <stop offset="0%" stopColor="#4DBC1B" />
                             <stop offset="50%" stopColor="#22d3ee" />
-                            <stop offset="100%" stopColor="#4ade80" />
+                            <stop offset="100%" stopColor="#4DBC1B" />
                         </linearGradient>
                         <filter id="dotGlow" x="-100%" y="-100%" width="400%" height="400%">
                             <feGaussianBlur stdDeviation="3" result="blur" />

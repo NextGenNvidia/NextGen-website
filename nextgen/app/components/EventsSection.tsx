@@ -30,7 +30,7 @@ export default function EventsSection() {
             >
                 <h2 className="text-3xl md:text-5xl font-black tracking-tight">
                     <span className="text-white">LATEST EVENTS </span>
-                    <span className="text-[#4ade80] text-glow">CONDUCTED</span>
+                    <span className="text-[#4DBC1B] text-glow">CONDUCTED</span>
                 </h2>
             </motion.div>
 
@@ -46,23 +46,23 @@ export default function EventsSection() {
                             className="group"
                         >
                             <motion.div
-                                whileHover={{ scale: 1.03, boxShadow: "0 0 30px rgba(74, 222, 128, 0.2)" }}
+                                whileHover={{ scale: 1.03, boxShadow: "0 0 30px rgba(77, 188, 27, 0.2)" }}
                                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                className="relative rounded-xl border border-[#4ade80]/20 bg-[#0a0a0a] overflow-hidden mb-4 magnetic-item"
+                                className="relative rounded-xl border border-[#4DBC1B]/20 bg-[#0a0a0a] overflow-hidden mb-4 magnetic-item"
                                 style={{ aspectRatio: "4/3" }}
                             >
-                                <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-[#4ade80]/40 rounded-tl-xl" />
-                                <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-[#4ade80]/40 rounded-tr-xl" />
-                                <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-[#4ade80]/40 rounded-bl-xl" />
-                                <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-[#4ade80]/40 rounded-br-xl" />
+                                <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-[#4DBC1B]/40 rounded-tl-xl" />
+                                <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-[#4DBC1B]/40 rounded-tr-xl" />
+                                <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-[#4DBC1B]/40 rounded-bl-xl" />
+                                <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-[#4DBC1B]/40 rounded-br-xl" />
                                 <div
                                     className="absolute inset-0 opacity-[0.03]"
                                     style={{
-                                        backgroundImage: "linear-gradient(rgba(74,222,128,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(74,222,128,0.5) 1px, transparent 1px)",
+                                        backgroundImage: "linear-gradient(rgba(77,188,27,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(77,188,27,0.5) 1px, transparent 1px)",
                                         backgroundSize: "25px 25px",
                                     }}
                                 />
-                                <div className="absolute inset-0 bg-[#4ade80]/0 group-hover:bg-[#4ade80]/[0.03] transition-colors duration-500" />
+                                <div className="absolute inset-0 bg-[#4DBC1B]/0 group-hover:bg-[#4DBC1B]/[0.03] transition-colors duration-500" />
                             </motion.div>
                             <h3 className="text-white font-bold text-lg">{event.title}</h3>
                             <p className="text-gray-500 text-sm">{event.subtitle}</p>
@@ -76,7 +76,7 @@ export default function EventsSection() {
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setPage((p) => Math.max(0, p - 1))}
                         disabled={page === 0}
-                        className="w-8 h-8 rounded-full border border-[#4ade80]/30 flex items-center justify-center text-[#4ade80] hover:bg-[#4ade80]/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed magnetic-item"
+                        className="w-8 h-8 rounded-full border border-[#4DBC1B]/30 flex items-center justify-center text-[#4DBC1B] hover:bg-[#4DBC1B]/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed magnetic-item"
                     >
                         <ChevronLeft className="w-4 h-4" />
                     </motion.button>
@@ -85,7 +85,7 @@ export default function EventsSection() {
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                         disabled={page === totalPages - 1}
-                        className="w-8 h-8 rounded-full border border-[#4ade80]/30 flex items-center justify-center text-[#4ade80] hover:bg-[#4ade80]/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed magnetic-item"
+                        className="w-8 h-8 rounded-full border border-[#4DBC1B]/30 flex items-center justify-center text-[#4DBC1B] hover:bg-[#4DBC1B]/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed magnetic-item"
                     >
                         <ChevronRight className="w-4 h-4" />
                     </motion.button>
@@ -94,7 +94,7 @@ export default function EventsSection() {
                             <button
                                 key={i}
                                 onClick={() => setPage(i)}
-                                className={`w-2 h-2 rounded-full transition-all duration-300 ${i === page ? "bg-[#4ade80] w-6" : "bg-gray-600 hover:bg-gray-500"
+                                className={`w-2 h-2 rounded-full transition-all duration-300 ${i === page ? "bg-[#4DBC1B] w-6" : "bg-gray-600 hover:bg-gray-500"
                                     }`}
                             />
                         ))}

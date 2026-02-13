@@ -6,22 +6,21 @@ import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 
 const navLinks = [
-    { name: "Luna", href: "#luna" },
     { name: "About Us", href: "#about" },
     { name: "Team", href: "#team" },
     { name: "Events", href: "#events" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ ready: parentReady = true }: { ready?: boolean }) {
     const [hidden, setHidden] = useState(true);
     const [scrolled, setScrolled] = useState(false);
     const lastScrollY = useRef(0);
-    const [ready, setReady] = useState(false);
+    const [scrollReady, setScrollReady] = useState(false);
 
     const { scrollY } = useScroll();
 
     useMotionValueEvent(scrollY, "change", (latest) => {
-        if (!ready) return;
+        if (!scrollReady) return;
         const diff = latest - lastScrollY.current;
         if (diff > 5 && latest > 100) {
             setHidden(true);
@@ -33,12 +32,13 @@ export default function Navbar() {
     });
 
     useEffect(() => {
+        if (!parentReady) return;
         const timer = setTimeout(() => {
             setHidden(false);
-            setReady(true);
-        }, 4200);
+            setScrollReady(true);
+        }, 3500);
         return () => clearTimeout(timer);
-    }, []);
+    }, [parentReady]);
 
     return (
         <motion.nav
@@ -49,8 +49,8 @@ export default function Navbar() {
             }}
             transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const }}
             className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 md:px-12 transition-colors duration-500 ${scrolled
-                    ? "bg-black/80 backdrop-blur-xl shadow-[0_1px_0_rgba(77,188,27,0.1)]"
-                    : "bg-black/30 backdrop-blur-md"
+                ? "bg-black/80 backdrop-blur-xl shadow-[0_1px_0_rgba(77,188,27,0.1)]"
+                : "bg-black/30 backdrop-blur-md"
                 }`}
         >
             <Link href="/" className="text-lg font-bold tracking-tight">
