@@ -49,7 +49,7 @@ export default function Hero({ ready = true }: { ready?: boolean }) {
     return (
         <section className="relative flex flex-col items-center justify-center min-h-screen px-4 text-center overflow-hidden">
             <div className="absolute inset-0 z-0">
-                <InteractiveDotGrid />
+                <InteractiveDotGrid startAnimation={showUI} />
             </div>
 
             {/* Subtle ambient glow — loops */}

@@ -249,16 +249,8 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
                 ctx.fill();
             }
 
-            // ── Flash at formation moments ──
-            if ((t > 5 && t < 5.4) || (t > 10.5 && t < 10.9)) {
-                const ft = t > 10.5 ? (t - 10.5) / 0.4 : (t - 5) / 0.4;
-                const fa = Math.sin(ft * Math.PI) * 0.12;
-                const fg = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w * 0.25);
-                fg.addColorStop(0, `rgba(77, 188, 27, ${fa})`);
-                fg.addColorStop(1, "rgba(77, 188, 27, 0)");
-                ctx.fillStyle = fg;
-                ctx.fillRect(0, 0, w, h);
-            }
+            // ── Flash at formation moments - REMOVED ──
+
 
             animRef.current = requestAnimationFrame(animate);
         };

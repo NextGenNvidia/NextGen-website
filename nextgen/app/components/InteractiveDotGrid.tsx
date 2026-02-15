@@ -11,15 +11,18 @@ interface Particle {
     targetY: number;
     size: number;
     alpha: number;
+    speed: number;
+    offset: number; // For individual wave variance
+    direction: number; // -1 for left, 1 for right
 }
 
-const PARTICLE_COUNT = 700;
+const PARTICLE_COUNT = 600;
 const DOT_COLOR = [77, 188, 27];
-const REPULSION_RADIUS = 450;
+const REPULSION_RADIUS = 300;
 const REPULSION_STRENGTH = 100;
-const ANIMATION_SPEED = 0.35;
+const ANIMATION_SPEED = 0.05;
 
-export default function InteractiveDotGrid() {
+export default function InteractiveDotGrid({ startAnimation = false }: { startAnimation?: boolean }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const particlesRef = useRef<Particle[]>([]);
     const mouseRef = useRef({ x: -1000, y: -1000 });
@@ -29,10 +32,14 @@ export default function InteractiveDotGrid() {
     const buildParticles = useCallback(() => {
         const w = sizeRef.current.w;
         const h = sizeRef.current.h;
+        const centerX = w / 2;
         const particles: Particle[] = [];
+
         for (let i = 0; i < PARTICLE_COUNT; i++) {
             const x = Math.random() * w;
             const y = Math.random() * h;
+            const direction = x < centerX ? -1 : 1;
+
             particles.push({
                 baseX: x,
                 baseY: y,
@@ -40,8 +47,11 @@ export default function InteractiveDotGrid() {
                 y,
                 targetX: x,
                 targetY: y,
-                size: Math.random() * 1.1 + 0.5,
-                alpha: Math.random() * 0.02 + 0.01,
+                size: Math.random() * 1.5 + 0.5,
+                alpha: 0, // Start invisible
+                speed: Math.random() * 0.5 + 0.2,
+                offset: Math.random() * Math.PI * 2,
+                direction,
             });
         }
         particlesRef.current = particles;
@@ -77,55 +87,68 @@ export default function InteractiveDotGrid() {
         const animate = () => {
             const w = sizeRef.current.w;
             const h = sizeRef.current.h;
+            const centerX = w / 2;
+
             ctx.clearRect(0, 0, w, h);
-            time += 0.008;
 
-            const mx = mouseRef.current.x;
-            const my = mouseRef.current.y;
+            // Only animate/draw if allowed
+            if (startAnimation) {
+                time += 0.01;
+                const mx = mouseRef.current.x;
+                const my = mouseRef.current.y;
 
-            // Fluid pulse sphere — slowly orbits around the canvas
-            const pulseX = w * 0.5 + Math.sin(time) * w * 0.35;
-            const pulseY = h * 0.5 + Math.cos(time * 0.7) * h * 0.3;
-            const pulseRadius = 200 + Math.sin(time * 2) * 50;
+                particlesRef.current.forEach((p) => {
+                    // Determine movement based on direction
+                    p.baseX += p.speed * p.direction;
 
-            particlesRef.current.forEach((p) => {
-                const dx = p.baseX - mx;
-                const dy = p.baseY - my;
-                const dist = Math.sqrt(dx * dx + dy * dy);
+                    // Wrap logic
+                    if (p.direction === -1 && p.baseX < -50) {
+                        p.baseX = centerX - Math.random() * 50;
+                        p.baseY = Math.random() * h;
+                    } else if (p.direction === 1 && p.baseX > w + 50) {
+                        p.baseX = centerX + Math.random() * 50;
+                        p.baseY = Math.random() * h;
+                    }
 
-                if (dist < REPULSION_RADIUS && dist > 0) {
-                    const t = 1 - dist / REPULSION_RADIUS;
-                    const force = t * t * REPULSION_STRENGTH;
-                    const angle = Math.atan2(dy, dx);
-                    p.targetX = p.baseX + Math.cos(angle) * force;
-                    p.targetY = p.baseY + Math.sin(angle) * force;
-                } else {
-                    p.targetX = p.baseX;
-                    p.targetY = p.baseY;
-                }
+                    // Fluid Wave Motion
+                    const cycle = time + p.offset;
+                    const waveY = Math.sin(p.baseX * 0.005 + cycle) * 20 +
+                        Math.sin(p.baseX * 0.01 + cycle * 0.5) * 10;
+                    const waveX = Math.cos(p.baseY * 0.005 + cycle) * 15;
 
-                p.x += (p.targetX - p.x) * ANIMATION_SPEED;
-                p.y += (p.targetY - p.y) * ANIMATION_SPEED;
+                    let targetX = p.baseX + waveX;
+                    let targetY = p.baseY + waveY;
 
-                // Distance from the moving pulse sphere
-                const pulseDx = p.x - pulseX;
-                const pulseDy = p.y - pulseY;
-                const pulseDist = Math.sqrt(pulseDx * pulseDx + pulseDy * pulseDy);
-                const pulseGlow = Math.max(0, 1 - pulseDist / pulseRadius);
-                const pulseIntensity = pulseGlow * pulseGlow * 0.4;
+                    // Mouse interaction
+                    const dx = targetX - mx;
+                    const dy = targetY - my;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
 
-                // Mouse proximity
-                const distFromMouse = Math.sqrt((p.x - mx) ** 2 + (p.y - my) ** 2);
-                const proximity = Math.max(0, 1 - distFromMouse / REPULSION_RADIUS);
+                    if (dist < REPULSION_RADIUS) {
+                        const t = 1 - dist / REPULSION_RADIUS;
+                        const force = t * t * REPULSION_STRENGTH;
+                        const angle = Math.atan2(dy, dx);
+                        targetX += Math.cos(angle) * force;
+                        targetY += Math.sin(angle) * force;
+                    }
 
-                const scale = 1 + proximity * 2 + pulseIntensity * 1.5;
-                const alpha = p.alpha + proximity * 0.75 + pulseIntensity;
+                    p.x += (targetX - p.x) * ANIMATION_SPEED * 2;
+                    p.y += (targetY - p.y) * ANIMATION_SPEED * 2;
 
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size * scale, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${DOT_COLOR[0]}, ${DOT_COLOR[1]}, ${DOT_COLOR[2]}, ${alpha})`;
-                ctx.fill();
-            });
+                    // Draw ONLY if near cursor
+                    if (dist < REPULSION_RADIUS) {
+                        const prox = 1 - dist / REPULSION_RADIUS;
+                        // Opacity fades out at edge of radius
+                        const alpha = prox * 0.6; // Max opacity 0.6
+                        const scale = 1 + prox * 1.5;
+
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size * scale, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${DOT_COLOR[0]}, ${DOT_COLOR[1]}, ${DOT_COLOR[2]}, ${alpha})`;
+                        ctx.fill();
+                    }
+                });
+            }
 
             animFrameRef.current = requestAnimationFrame(animate);
         };
@@ -140,7 +163,7 @@ export default function InteractiveDotGrid() {
             window.removeEventListener("resize", resize);
             document.removeEventListener("mousemove", onMouseMove);
         };
-    }, [buildParticles]);
+    }, [buildParticles, startAnimation]);
 
     return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />;
 }
