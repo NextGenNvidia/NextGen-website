@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-    Zap, Cpu, FileText, Database, Play
+    Zap, Cpu, FileText, Database, Play, X
 } from "lucide-react";
 import dynamic from "next/dynamic";
 
@@ -19,6 +19,21 @@ const features = [
 ];
 
 export default function RivaSection() {
+    const [showVideo, setShowVideo] = useState(false);
+
+    // Close video on scroll
+    useEffect(() => {
+        const handleScroll = () => {
+            if (showVideo) setShowVideo(false);
+        };
+
+        if (showVideo) {
+            window.addEventListener("scroll", handleScroll, { passive: true });
+        }
+
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [showVideo]);
+
     return (
         <section id="riva" className="relative bg-black text-white pt-0 pb-24 px-4 md:px-8 overflow-hidden min-h-[80vh] flex flex-col justify-center items-center">
 
@@ -130,6 +145,7 @@ export default function RivaSection() {
                         initial={{ opacity: 0, x: 20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         className="hidden md:block relative group cursor-pointer"
+                        onClick={() => setShowVideo(true)}
                     >
                         <div className="absolute -inset-0.5 bg-gradient-to-r from-[#4DBC1B] to-[#22d3ee] rounded-lg blur opacity-20 group-hover:opacity-50 transition duration-500" />
                         <div className="relative w-[300px] h-[160px] bg-black border border-[#4DBC1B]/50 rounded-lg flex items-center justify-center overflow-hidden">
@@ -158,6 +174,42 @@ export default function RivaSection() {
                     </motion.div>
                 </div>
             </div>
+
+            {/* Video Modal */}
+            <AnimatePresence>
+                {showVideo && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
+                        onClick={() => setShowVideo(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden border border-[#4DBC1B]/30 shadow-[0_0_50px_rgba(77,188,27,0.2)]"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {/* Close Button */}
+                            <button
+                                onClick={() => setShowVideo(false)}
+                                className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/50 hover:bg-[#4DBC1B] text-white transition-all duration-300"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+
+                            {/* Placeholder Video - Replace with actual video URL */}
+                            <div className="w-full h-full flex flex-col items-center justify-center bg-[#0a0a0a]">
+                                <Play className="w-20 h-20 text-[#4DBC1B] opacity-50 mb-4" />
+                                <p className="text-[#4DBC1B] font-bold tracking-widest uppercase">Video Demo Placeholder</p>
+                                <p className="text-gray-500 text-sm mt-2">Replace with actual iframe or video tag</p>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </section>
     );
 }
