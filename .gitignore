@@ -1,0 +1,25 @@
+# Dependency directories
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# Production build
+build/
+dist/
+
+# Misc
+.DS_Store
+*.pem
+
+# Ops
+.env
+.env.local
+.env.*.local
+.vercel
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
