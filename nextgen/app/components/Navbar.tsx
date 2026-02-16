@@ -6,9 +6,9 @@ import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 
 const navLinks = [
-    { name: "About Us", href: "#about" },
-    { name: "Team", href: "#team" },
-    { name: "Events", href: "#events" },
+    { name: "About Us", href: "/#about" },
+    { name: "Team", href: "/team" },
+    { name: "Events", href: "/events" },
 ];
 
 export default function Navbar({ ready: parentReady = true }: { ready?: boolean }) {

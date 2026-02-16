@@ -20,7 +20,7 @@ const features = [
 
 export default function RivaSection() {
     return (
-        <section className="relative bg-black text-white pt-0 pb-24 px-4 md:px-8 overflow-hidden min-h-[80vh] flex flex-col justify-center items-center">
+        <section id="riva" className="relative bg-black text-white pt-0 pb-24 px-4 md:px-8 overflow-hidden min-h-[80vh] flex flex-col justify-center items-center">
 
             {/* Background 01 */}
 
