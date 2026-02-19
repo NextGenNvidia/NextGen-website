@@ -8,11 +8,11 @@ function MobileLoader({ onComplete }: { onComplete: () => void }) {
     const [phase, setPhase] = useState<"ng" | "nextgen" | "done">("ng");
 
     useEffect(() => {
-        const t1 = setTimeout(() => setPhase("nextgen"), 2500);
+        const t1 = setTimeout(() => setPhase("nextgen"), 3000);
         const t2 = setTimeout(() => {
             setPhase("done");
             setTimeout(onComplete, 600);
-        }, 5000);
+        }, 7000);
         return () => { clearTimeout(t1); clearTimeout(t2); };
     }, [onComplete]);
 
@@ -75,7 +75,7 @@ function MobileLoader({ onComplete }: { onComplete: () => void }) {
                             className="absolute inset-y-0 left-0 bg-[#4DBC1B] rounded-full"
                             initial={{ width: "0%" }}
                             animate={{ width: "100%" }}
-                            transition={{ duration: 5, ease: "linear" }}
+                            transition={{ duration: 7, ease: "linear" }}
                         />
                     </div>
 
@@ -104,11 +104,11 @@ function DesktopLoader({ onComplete }: { onComplete: () => void }) {
     const [phase, setPhase] = useState<"ng" | "nextgen" | "done">("ng");
 
     useEffect(() => {
-        const t1 = setTimeout(() => setPhase("nextgen"), 3000);
+        const t1 = setTimeout(() => setPhase("nextgen"), 4000);
         const t2 = setTimeout(() => {
             setPhase("done");
             setTimeout(onComplete, 800);
-        }, 6500);
+        }, 9000);
         return () => { clearTimeout(t1); clearTimeout(t2); };
     }, [onComplete]);
 

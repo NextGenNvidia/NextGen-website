@@ -172,12 +172,21 @@ export default function InteractiveDotGrid({ startAnimation = false }: { startAn
                     p.x += (targetX - p.x) * ANIMATION_SPEED * 2;
                     p.y += (targetY - p.y) * ANIMATION_SPEED * 2;
 
-                    // Only draw particles near cursor
+                    // Only draw particles near cursor — boosted visibility
                     if (distSq < REPULSION_RADIUS_SQ) {
                         const dist = Math.sqrt(distSq);
                         const prox = 1 - dist / REPULSION_RADIUS;
-                        const alpha = prox * 0.6;
-                        const scale = 1 + prox * 1.5;
+                        const alpha = 0.3 + prox * 0.7; // min 0.3, max 1.0
+                        const scale = 1 + prox * 2;     // up to 3x size
+
+                        // Outer glow ring for dots very close to cursor
+                        if (prox > 0.6) {
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, p.size * scale * 2.5, 0, Math.PI * 2);
+                            ctx.fillStyle = `rgba(${DOT_COLOR[0]},${DOT_COLOR[1]},${DOT_COLOR[2]},${(prox - 0.6) * 0.15})`;
+                            ctx.fill();
+                        }
+
                         ctx.beginPath();
                         ctx.arc(p.x, p.y, p.size * scale, 0, Math.PI * 2);
                         ctx.fillStyle = `rgba(${DOT_COLOR[0]},${DOT_COLOR[1]},${DOT_COLOR[2]},${alpha})`;
