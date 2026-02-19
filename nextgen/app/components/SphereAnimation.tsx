@@ -362,8 +362,9 @@ export default function SphereAnimation() {
     };
   }, []);
 
-  const maxSteps = isMobile ? 128 : 256;
-  const dpr = isMobile ? 1 : [1, 2];
+  const maxSteps = isMobile ? 64 : 128;
+  // Cap DPR at 1.5 — prevents Retina/MacBook from rendering 4x pixels through the raymarcher
+  const dpr = Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.5);
 
   return (
     // IMPORTANT: style height must be set for Canvas to appear

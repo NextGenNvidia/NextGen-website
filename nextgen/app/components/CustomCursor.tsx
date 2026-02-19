@@ -10,11 +10,10 @@ export default function CustomCursor() {
         if (!cursor) return;
 
         const onMouseMove = (e: MouseEvent) => {
-            cursor.style.left = `${e.clientX}px`;
-            cursor.style.top = `${e.clientY}px`;
+            cursor.style.transform = `translate3d(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%), 0)`;
         };
 
-        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mousemove", onMouseMove, { passive: true });
         return () => document.removeEventListener("mousemove", onMouseMove);
     }, []);
 
@@ -25,10 +24,12 @@ export default function CustomCursor() {
             style={{
                 width: 12,
                 height: 12,
+                top: 0,
+                left: 0,
                 borderRadius: "50%",
                 backgroundColor: "#ffffff",
-                transform: "translate(-50%, -50%)",
                 mixBlendMode: "difference",
+                willChange: "transform",
             }}
         />
     );

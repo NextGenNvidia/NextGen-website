@@ -81,54 +81,69 @@ export default function ParticleField() {
         canvas.addEventListener("mouseleave", handleMouseLeave);
 
         let time = 0;
-        const animate = () => {
+        let lastFrame = 0;
+        const FRAME_MS = 1000 / 30; // throttle to 30fps
+        const CONNECT_DIST_SQ = 100 * 100;
+        const REPULSE_DIST_SQ = 120 * 120;
+
+        const animate = (now: number) => {
+            animFrameRef.current = requestAnimationFrame(animate);
+            if (now - lastFrame < FRAME_MS) return;
+            lastFrame = now;
+
             time += 1;
             const w = canvas.width / (window.devicePixelRatio || 1);
             const h = canvas.height / (window.devicePixelRatio || 1);
             ctx.clearRect(0, 0, w, h);
 
             const { x: mx, y: my } = mouseRef.current;
+            const pts = particlesRef.current;
+            const len = pts.length;
 
-            particlesRef.current.forEach((p) => {
-                // Sine wave oscillation
+            // ── Update positions ──────────────────────────────────────────
+            for (let i = 0; i < len; i++) {
+                const p = pts[i];
                 p.x += p.vx + Math.sin(time * p.speed + p.phase) * 0.3;
                 p.y += p.vy + Math.cos(time * p.speed + p.phase) * 0.3;
 
-                // Mouse repulsion
+                // Mouse repulsion — squared distance, no sqrt until inside
                 const dx = p.x - mx;
                 const dy = p.y - my;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 120) {
+                const dSq = dx * dx + dy * dy;
+                if (dSq < REPULSE_DIST_SQ && dSq > 0) {
+                    const dist = Math.sqrt(dSq);
                     const force = (120 - dist) / 120;
                     p.x += (dx / dist) * force * 3;
                     p.y += (dy / dist) * force * 3;
                 }
 
-                // Boundary wrap
                 if (p.x < -10) p.x = w + 10;
                 if (p.x > w + 10) p.x = -10;
                 if (p.y < -10) p.y = h + 10;
                 if (p.y > h + 10) p.y = -10;
+            }
 
-                // Draw particle with glow
-                ctx.save();
+            // ── Draw particles (no shadowBlur — use fillStyle color directly) ──
+            for (let i = 0; i < len; i++) {
+                const p = pts[i];
                 ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = p.color;
                 ctx.fill();
-                ctx.restore();
+            }
+            ctx.globalAlpha = 1;
 
-                // Draw connections between nearby particles
-                particlesRef.current.forEach((p2) => {
-                    if (p === p2) return;
+            // ── Draw connections — O(N*(N-1)/2) forward-only, no sqrt unless close ──
+            for (let i = 0; i < len; i++) {
+                const p = pts[i];
+                for (let j = i + 1; j < len; j++) {
+                    const p2 = pts[j];
                     const cdx = p.x - p2.x;
                     const cdy = p.y - p2.y;
-                    const cdist = Math.sqrt(cdx * cdx + cdy * cdy);
-                    if (cdist < 100) {
-                        ctx.save();
+                    const cdSq = cdx * cdx + cdy * cdy;
+                    if (cdSq < CONNECT_DIST_SQ) {
+                        const cdist = Math.sqrt(cdSq);
                         ctx.globalAlpha = (1 - cdist / 100) * 0.15;
                         ctx.strokeStyle = p.color;
                         ctx.lineWidth = 0.5;
@@ -136,15 +151,13 @@ export default function ParticleField() {
                         ctx.moveTo(p.x, p.y);
                         ctx.lineTo(p2.x, p2.y);
                         ctx.stroke();
-                        ctx.restore();
                     }
-                });
-            });
-
-            animFrameRef.current = requestAnimationFrame(animate);
+                }
+            }
+            ctx.globalAlpha = 1;
         };
 
-        animate();
+        animFrameRef.current = requestAnimationFrame(animate);
 
         return () => {
             cancelAnimationFrame(animFrameRef.current);

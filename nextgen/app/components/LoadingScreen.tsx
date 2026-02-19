@@ -1,310 +1,282 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-interface Particle {
-    x: number;
-    y: number;
-    targetX: number;
-    targetY: number;
-    size: number;
-    alpha: number;
-    speed: number;
-    isLogo: boolean;
-    phase: number;
-    driftSpeed: number;
-}
-
-const BG_COUNT = 80;
-
-function sampleText(
-    text: string,
-    w: number,
-    h: number,
-    fontSize: number,
-    maxPts = 500
-): [number, number][] {
-    const off = document.createElement("canvas");
-    off.width = w;
-    off.height = h;
-    const c = off.getContext("2d");
-    if (!c) return [];
-
-    c.fillStyle = "#fff";
-    c.textAlign = "center";
-    c.textBaseline = "middle";
-    c.font = `900 ${fontSize}px "Arial Black", "Impact", sans-serif`;
-    c.fillText(text, w / 2, h / 2);
-
-    const img = c.getImageData(0, 0, w, h);
-    const pts: [number, number][] = [];
-
-    // Start with a base step, then increase if we'd exceed maxPts
-    let step = Math.max(6, Math.round(fontSize / 20));
-
-    // First pass: count how many points we'd get
-    let count = 0;
-    for (let py = 0; py < h; py += step) {
-        for (let px = 0; px < w; px += step) {
-            if (img.data[(py * w + px) * 4 + 3] > 128) count++;
-        }
-    }
-    // If too many, scale step up proportionally
-    if (count > maxPts) {
-        step = Math.ceil(step * Math.sqrt(count / maxPts));
-    }
-
-    for (let py = 0; py < h; py += step) {
-        for (let px = 0; px < w; px += step) {
-            if (img.data[(py * w + px) * 4 + 3] > 128) {
-                pts.push([px, py]);
-            }
-        }
-    }
-    return pts;
-}
-
-function easeInOutCubic(t: number) {
-    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-}
-
-export default function LoadingScreen({ onComplete }: { onComplete: () => void }) {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const particlesRef = useRef<Particle[]>([]);
-    const animRef = useRef(0);
-    const [fadeOut, setFadeOut] = useState(false);
-    const completedRef = useRef(false);
-    const targetsRef = useRef<{ ng: [number, number][]; full: [number, number][] }>({
-        ng: [],
-        full: [],
-    });
-
-    const init = useCallback((w: number, h: number) => {
-        const isMobile = w < 768;
-
-        // On mobile: use larger font so particles sample cleanly (not pixelated)
-        // On desktop: use standard proportional sizes
-        const ngFontSize = isMobile
-            ? Math.min(w * 0.45, h * 0.3)   // e.g. 390px phone → ~175px font
-            : Math.min(h * 0.35, w * 0.18);
-
-        const fullFontSize = isMobile
-            ? Math.min(w * 0.18, h * 0.12)  // e.g. 390px phone → ~70px font
-            : Math.min(h * 0.2, w * 0.08);
-
-        // Cap particles on mobile to prevent lag
-        const maxPts = isMobile ? 300 : 600;
-        const ng = sampleText("NG", w, h, ngFontSize, maxPts);
-        const full = sampleText("NextGen", w, h, fullFontSize, maxPts);
-
-        targetsRef.current = { ng, full };
-
-        // Use whichever has more points
-        const logoCount = Math.max(ng.length, full.length);
-        const particles: Particle[] = [];
-
-        for (let i = 0; i < logoCount; i++) {
-            particles.push({
-                x: Math.random() * w,
-                y: Math.random() * h,
-                targetX: 0,
-                targetY: 0,
-                size: 1.5 + Math.random() * 1.0,
-                alpha: 0.6 + Math.random() * 0.4,
-                speed: 0.03 + Math.random() * 0.03,
-                isLogo: true,
-                phase: Math.random() * Math.PI * 2,
-                driftSpeed: 0.15 + Math.random() * 0.4,
-            });
-        }
-
-        // Background particles — fewer on mobile
-        const bgCount = isMobile ? 40 : BG_COUNT;
-        for (let i = 0; i < bgCount; i++) {
-            particles.push({
-                x: Math.random() * w,
-                y: Math.random() * h,
-                targetX: 0,
-                targetY: 0,
-                size: 0.5 + Math.random() * 0.8,
-                alpha: 0.03 + Math.random() * 0.06,
-                speed: 0,
-                isLogo: false,
-                phase: Math.random() * Math.PI * 2,
-                driftSpeed: 0.1 + Math.random() * 0.3,
-            });
-        }
-
-        particlesRef.current = particles;
-    }, []);
+// ─── Mobile Loading Screen ────────────────────────────────────────────────────
+function MobileLoader({ onComplete }: { onComplete: () => void }) {
+    const [phase, setPhase] = useState<"ng" | "nextgen" | "done">("ng");
 
     useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
-
-        const dpr = window.devicePixelRatio || 1;
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        canvas.width = w * dpr;
-        canvas.height = h * dpr;
-        canvas.style.width = `${w}px`;
-        canvas.style.height = `${h}px`;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-        init(w, h);
-
-        const start = performance.now();
-        const { ng, full } = targetsRef.current;
-        const logoCount = Math.max(ng.length, full.length);
-
-        // ═══════════════════════════════════════
-        //  15-SECOND CINEMATIC TIMELINE
-        // ═══════════════════════════════════════
-        //  0   – 2s    ✦ Float (all particles)
-        //  2   – 5s    ✦ Converge → "NG"
-        //  5   – 7.5s  ✦ Hold "NG" + glow
-        //  7.5 – 10.5s ✦ Morph → "NextGen"
-        //  10.5– 12.5s ✦ Hold "NextGen" + glow
-        //  12.5– 14s   ✦ Collapse inward
-        //  14  – 15s   ✦ Fade out
-        // ═══════════════════════════════════════
-
-        const animate = (now: number) => {
-            const t = (now - start) / 1000;
-            ctx.clearRect(0, 0, w, h);
-
-            // Phase progress (0→1)
-            const converge = t < 2 ? 0 : easeInOutCubic(Math.min(1, (t - 2) / 3));
-            const morph = t < 7.5 ? 0 : easeInOutCubic(Math.min(1, (t - 7.5) / 3));
-            const collapse = t < 12.5 ? 0 : easeInOutCubic(Math.min(1, (t - 12.5) / 1.5));
-
-            // Exit
-            if (t > 14 && !completedRef.current) {
-                completedRef.current = true;
-                setFadeOut(true);
-                setTimeout(onComplete, 1000);
-            }
-
-            // ── Ambient glow when text is formed ──
-            const glow = converge * 0.08 * (1 - collapse);
-            if (glow > 0.001) {
-                const g = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w * 0.35);
-                g.addColorStop(0, `rgba(77, 188, 27, ${glow})`);
-                g.addColorStop(0.5, `rgba(77, 188, 27, ${glow * 0.15})`);
-                g.addColorStop(1, "rgba(77, 188, 27, 0)");
-                ctx.fillStyle = g;
-                ctx.fillRect(0, 0, w, h);
-            }
-
-            // ── Background particles ──
-            for (let i = logoCount; i < particlesRef.current.length; i++) {
-                const p = particlesRef.current[i];
-                p.x += Math.cos(p.phase + t * 0.3) * p.driftSpeed;
-                p.y += Math.sin(p.phase + t * 0.2) * p.driftSpeed;
-                if (p.x < -10) p.x = w + 10;
-                if (p.x > w + 10) p.x = -10;
-                if (p.y < -10) p.y = h + 10;
-                if (p.y > h + 10) p.y = -10;
-
-                const pulse = 0.4 + Math.sin(t * 1.5 + p.phase) * 0.6;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(77, 188, 27, ${p.alpha * pulse})`;
-                ctx.fill();
-            }
-
-            // ── Logo particles ──
-            for (let i = 0; i < logoCount; i++) {
-                const p = particlesRef.current[i];
-                if (!p?.isLogo) continue;
-
-                const ngPt = ng[i % ng.length];
-                const fullPt = full[i % full.length];
-
-                // Blend target NG → NextGen
-                const tx = morph > 0 ? ngPt[0] + (fullPt[0] - ngPt[0]) * morph : ngPt[0];
-                const ty = morph > 0 ? ngPt[1] + (fullPt[1] - ngPt[1]) * morph : ngPt[1];
-
-                if (collapse > 0) {
-                    // Collapse to center
-                    p.x += (w / 2 - p.x) * collapse * 0.12;
-                    p.y += (h / 2 - p.y) * collapse * 0.12;
-                } else if (converge > 0) {
-                    // Converge toward text position
-                    // Use direct lerp — snaps quickly with acceleration
-                    const spd = p.speed + converge * converge * 0.15;
-                    p.x += (tx - p.x) * spd;
-                    p.y += (ty - p.y) * spd;
-                } else {
-                    // Floating
-                    p.x += Math.sin(t * 0.5 + p.phase) * p.driftSpeed;
-                    p.y += Math.cos(t * 0.3 + p.phase * 1.4) * p.driftSpeed;
-                    if (p.x < -10) p.x = w + 10;
-                    if (p.x > w + 10) p.x = -10;
-                    if (p.y < -10) p.y = h + 10;
-                    if (p.y > h + 10) p.y = -10;
-                }
-
-                // Alpha & size
-                const fadeA = 1 - collapse;
-                const a = converge > 0
-                    ? p.alpha * (0.2 + converge * 0.8) * fadeA
-                    : p.alpha * 0.1;
-                const sz = converge > 0
-                    ? p.size * (0.6 + converge * 0.4) * (1 - collapse * 0.5)
-                    : p.size * 0.4;
-
-                // Glow halo when formed
-                if (converge > 0.8 && collapse === 0) {
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, sz * 2.5, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(77, 188, 27, ${(converge - 0.8) * 0.04})`;
-                    ctx.fill();
-                }
-
-                // Core particle
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, sz, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(77, 188, 27, ${a})`;
-                ctx.fill();
-            }
-
-            // ── Flash at formation moments - REMOVED ──
-
-
-            animRef.current = requestAnimationFrame(animate);
-        };
-
-        animRef.current = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(animRef.current);
-    }, [init, onComplete]);
+        const t1 = setTimeout(() => setPhase("nextgen"), 2500);
+        const t2 = setTimeout(() => {
+            setPhase("done");
+            setTimeout(onComplete, 600);
+        }, 5000);
+        return () => { clearTimeout(t1); clearTimeout(t2); };
+    }, [onComplete]);
 
     return (
         <AnimatePresence>
-            {!fadeOut ? (
+            {phase !== "done" && (
                 <motion.div
-                    key="loader"
-                    initial={{ opacity: 1 }}
+                    key="mobile-loader"
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-                    className="fixed inset-0 z-[100] bg-black"
+                    transition={{ duration: 0.6 }}
+                    className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center gap-6"
                 >
-                    <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
-                </motion.div>
-            ) : (
-                <motion.div
-                    key="loader-out"
-                    initial={{ opacity: 1, scale: 1 }}
-                    animate={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-                    className="fixed inset-0 z-[100] bg-black"
-                >
-                    <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+                    <div className="absolute inset-0 pointer-events-none">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#4DBC1B]/10 rounded-full blur-[80px]" />
+                    </div>
+
+                    <AnimatePresence mode="wait">
+                        {phase === "ng" ? (
+                            <motion.p
+                                key="ng"
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 1.1 }}
+                                transition={{ duration: 0.6 }}
+                                className="font-black tracking-tighter leading-none"
+                                style={{
+                                    fontSize: "clamp(5rem, 30vw, 10rem)",
+                                    color: "#4DBC1B",
+                                    textShadow: "0 0 40px rgba(77,188,27,0.5), 0 0 80px rgba(77,188,27,0.2)",
+                                }}
+                            >
+                                NG
+                            </motion.p>
+                        ) : (
+                            <motion.div
+                                key="nextgen"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.6 }}
+                                className="text-center px-8"
+                            >
+                                <p
+                                    className="font-black tracking-tight leading-none"
+                                    style={{
+                                        fontSize: "clamp(2.5rem, 16vw, 5rem)",
+                                        color: "white",
+                                        textShadow: "0 0 30px rgba(77,188,27,0.3)",
+                                    }}
+                                >
+                                    Next<span style={{ color: "#4DBC1B" }}>Gen</span>
+                                </p>
+                                <p className="text-gray-500 text-sm tracking-[0.3em] uppercase mt-2">SuperComputing</p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    <div className="w-32 h-px bg-white/10 relative overflow-hidden rounded-full">
+                        <motion.div
+                            className="absolute inset-y-0 left-0 bg-[#4DBC1B] rounded-full"
+                            initial={{ width: "0%" }}
+                            animate={{ width: "100%" }}
+                            transition={{ duration: 5, ease: "linear" }}
+                        />
+                    </div>
+
+                    {[...Array(12)].map((_, i) => (
+                        <motion.div
+                            key={i}
+                            className="absolute rounded-full bg-[#4DBC1B]"
+                            style={{
+                                width: 2 + (i % 3), height: 2 + (i % 3),
+                                left: `${10 + (i * 7.5) % 80}%`,
+                                top: `${15 + (i * 11) % 70}%`,
+                                opacity: 0.15 + (i % 4) * 0.08,
+                            }}
+                            animate={{ y: [0, -12, 0], opacity: [0.1, 0.4, 0.1] }}
+                            transition={{ duration: 2 + (i % 3), repeat: Infinity, delay: i * 0.2, ease: "easeInOut" }}
+                        />
+                    ))}
                 </motion.div>
             )}
         </AnimatePresence>
     );
+}
+
+// ─── Desktop Loading Screen (CSS-only, cinematic) ─────────────────────────────
+function DesktopLoader({ onComplete }: { onComplete: () => void }) {
+    const [phase, setPhase] = useState<"ng" | "nextgen" | "done">("ng");
+
+    useEffect(() => {
+        const t1 = setTimeout(() => setPhase("nextgen"), 3000);
+        const t2 = setTimeout(() => {
+            setPhase("done");
+            setTimeout(onComplete, 800);
+        }, 6500);
+        return () => { clearTimeout(t1); clearTimeout(t2); };
+    }, [onComplete]);
+
+    return (
+        <AnimatePresence>
+            {phase !== "done" && (
+                <motion.div
+                    key="desktop-loader"
+                    exit={{ opacity: 0, scale: 0.97 }}
+                    transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center gap-8 overflow-hidden"
+                >
+                    {/* Ambient radial glow */}
+                    <motion.div
+                        className="absolute inset-0 pointer-events-none"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: phase === "nextgen" ? 1 : 0 }}
+                        transition={{ duration: 1.5 }}
+                    >
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#4DBC1B]/8 rounded-full blur-[120px]" />
+                    </motion.div>
+
+                    {/* Scanline overlay for cinematic feel */}
+                    <div
+                        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+                        style={{
+                            backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(77,188,27,0.5) 2px, rgba(77,188,27,0.5) 3px)",
+                        }}
+                    />
+
+                    {/* Main text */}
+                    <AnimatePresence mode="wait">
+                        {phase === "ng" ? (
+                            <motion.div
+                                key="ng"
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20, scale: 1.05 }}
+                                transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                className="text-center relative"
+                            >
+                                {/* Glitch lines */}
+                                <motion.p
+                                    className="font-black tracking-tighter leading-none select-none"
+                                    style={{
+                                        fontSize: "clamp(8rem, 18vw, 18rem)",
+                                        color: "#4DBC1B",
+                                        textShadow: "0 0 60px rgba(77,188,27,0.4), 0 0 120px rgba(77,188,27,0.15)",
+                                    }}
+                                    animate={{
+                                        textShadow: [
+                                            "0 0 60px rgba(77,188,27,0.4), 0 0 120px rgba(77,188,27,0.15)",
+                                            "0 0 80px rgba(77,188,27,0.6), 0 0 160px rgba(77,188,27,0.25)",
+                                            "0 0 60px rgba(77,188,27,0.4), 0 0 120px rgba(77,188,27,0.15)",
+                                        ],
+                                    }}
+                                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                >
+                                    NG
+                                </motion.p>
+                                <motion.p
+                                    className="text-gray-600 text-xs tracking-[0.5em] uppercase mt-2"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.5 }}
+                                >
+                                    Initializing
+                                </motion.p>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="nextgen"
+                                initial={{ opacity: 0, scale: 0.92 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                className="text-center relative"
+                            >
+                                <motion.p
+                                    className="font-black tracking-tight leading-none select-none"
+                                    style={{
+                                        fontSize: "clamp(4rem, 10vw, 9rem)",
+                                        color: "white",
+                                        textShadow: "0 0 40px rgba(77,188,27,0.2)",
+                                    }}
+                                >
+                                    Next<span style={{ color: "#4DBC1B", textShadow: "0 0 40px rgba(77,188,27,0.5)" }}>Gen</span>
+                                </motion.p>
+                                <motion.p
+                                    className="text-gray-500 tracking-[0.4em] uppercase mt-3"
+                                    style={{ fontSize: "0.7rem" }}
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3 }}
+                                >
+                                    SuperComputing
+                                </motion.p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Progress bar */}
+                    <div className="w-48 h-px bg-white/8 relative overflow-hidden rounded-full">
+                        <motion.div
+                            className="absolute inset-y-0 left-0 rounded-full"
+                            style={{ background: "linear-gradient(90deg, #4DBC1B, #22d3ee)" }}
+                            initial={{ width: "0%" }}
+                            animate={{ width: "100%" }}
+                            transition={{ duration: 6.5, ease: "linear" }}
+                        />
+                    </div>
+
+                    {/* Corner decorations */}
+                    {[
+                        "top-8 left-8 border-t border-l",
+                        "top-8 right-8 border-t border-r",
+                        "bottom-8 left-8 border-b border-l",
+                        "bottom-8 right-8 border-b border-r",
+                    ].map((cls, i) => (
+                        <motion.div
+                            key={i}
+                            className={`absolute w-8 h-8 border-[#4DBC1B]/30 ${cls}`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.3 + i * 0.1 }}
+                        />
+                    ))}
+
+                    {/* Floating ambient dots */}
+                    {[...Array(16)].map((_, i) => (
+                        <motion.div
+                            key={i}
+                            className="absolute rounded-full bg-[#4DBC1B]"
+                            style={{
+                                width: 1.5 + (i % 3),
+                                height: 1.5 + (i % 3),
+                                left: `${5 + (i * 6) % 90}%`,
+                                top: `${10 + (i * 9) % 80}%`,
+                            }}
+                            animate={{
+                                y: [0, -(10 + i % 8), 0],
+                                opacity: [0.08, 0.3, 0.08],
+                            }}
+                            transition={{
+                                duration: 2.5 + (i % 4) * 0.5,
+                                repeat: Infinity,
+                                delay: i * 0.15,
+                                ease: "easeInOut",
+                            }}
+                        />
+                    ))}
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+}
+
+// ─── Main export ──────────────────────────────────────────────────────────────
+export default function LoadingScreen({ onComplete }: { onComplete: () => void }) {
+    const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        setIsMobile(window.innerWidth < 768);
+    }, []);
+
+    if (isMobile === null) return <div className="fixed inset-0 z-[100] bg-black" />;
+
+    return isMobile
+        ? <MobileLoader onComplete={onComplete} />
+        : <DesktopLoader onComplete={onComplete} />;
 }

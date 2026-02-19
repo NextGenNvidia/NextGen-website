@@ -7,57 +7,46 @@ interface Particle {
     baseY: number;
     x: number;
     y: number;
-    targetX: number;
-    targetY: number;
     size: number;
     alpha: number;
     speed: number;
-    offset: number; // For individual wave variance
-    direction: number; // -1 for left, 1 for right
+    offset: number;
+    direction: number;
 }
 
-
-const PARTICLE_COUNT_DESKTOP = 700;
-const PARTICLE_COUNT_MOBILE = 250;
+const PARTICLE_COUNT_DESKTOP = 500; // reduced from 700
+const PARTICLE_COUNT_MOBILE = 175;  // reduced from 250
 const DOT_COLOR = [77, 188, 27];
-const REPULSION_RADIUS = 300;
-const REPULSION_STRENGTH = 100;
+const REPULSION_RADIUS = 250;       // reduced from 300
+const REPULSION_RADIUS_SQ = REPULSION_RADIUS * REPULSION_RADIUS;
+const REPULSION_STRENGTH = 90;
 const ANIMATION_SPEED = 0.05;
 
 export default function InteractiveDotGrid({ startAnimation = false }: { startAnimation?: boolean }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const particlesRef = useRef<Particle[]>([]);
-    const mouseRef = useRef({ x: -1000, y: -1000 });
+    const mouseRef = useRef({ x: -9999, y: -9999 });
     const animFrameRef = useRef<number>(0);
     const sizeRef = useRef({ w: 0, h: 0 });
     const rectRef = useRef<DOMRect | null>(null);
+    const isMobileRef = useRef(false);
+    const lastFrameRef = useRef(0);
 
     const buildParticles = useCallback(() => {
-        const w = sizeRef.current.w;
-        const h = sizeRef.current.h;
+        const { w, h } = sizeRef.current;
         const centerX = w / 2;
+        const count = isMobileRef.current ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT_DESKTOP;
         const particles: Particle[] = [];
-
-        // Determine particle count based on width
-        const count = w < 768 ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT_DESKTOP;
-
         for (let i = 0; i < count; i++) {
             const x = Math.random() * w;
             const y = Math.random() * h;
-            const direction = x < centerX ? -1 : 1;
-
             particles.push({
-                baseX: x,
-                baseY: y,
-                x,
-                y,
-                targetX: x,
-                targetY: y,
+                baseX: x, baseY: y, x, y,
                 size: Math.random() * 1.5 + 0.5,
-                alpha: 0, // Start invisible
+                alpha: 0,
                 speed: Math.random() * 0.5 + 0.2,
                 offset: Math.random() * Math.PI * 2,
-                direction,
+                direction: x < centerX ? -1 : 1,
             });
         }
         particlesRef.current = particles;
@@ -69,12 +58,12 @@ export default function InteractiveDotGrid({ startAnimation = false }: { startAn
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
+        isMobileRef.current = window.innerWidth < 768;
+
         const updateSize = () => {
             const dpr = window.devicePixelRatio || 1;
             const rect = canvas.parentElement?.getBoundingClientRect();
-            // Cache the rect for mouse move calculations
             if (rect) rectRef.current = rect;
-
             const w = rect?.width || window.innerWidth;
             const h = rect?.height || window.innerHeight;
             canvas.width = w * dpr;
@@ -83,22 +72,23 @@ export default function InteractiveDotGrid({ startAnimation = false }: { startAn
             canvas.style.height = `${h}px`;
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             sizeRef.current = { w, h };
+            isMobileRef.current = w < 768;
             buildParticles();
         };
 
         const onMouseMove = (e: MouseEvent) => {
+            if (isMobileRef.current) return;
             if (!rectRef.current && canvas.parentElement) {
                 rectRef.current = canvas.parentElement.getBoundingClientRect();
             }
             if (rectRef.current) {
                 mouseRef.current = {
                     x: e.clientX - rectRef.current.left,
-                    y: e.clientY - rectRef.current.top
+                    y: e.clientY - rectRef.current.top,
                 };
             }
         };
 
-        // Update rect on scroll to keep mouse position accurate relative to canvas
         const onScroll = () => {
             if (canvas.parentElement) {
                 rectRef.current = canvas.parentElement.getBoundingClientRect();
@@ -106,48 +96,72 @@ export default function InteractiveDotGrid({ startAnimation = false }: { startAn
         };
 
         let time = 0;
+        // Target 30fps — enough for this ambient effect, halves CPU vs 60fps
+        const FRAME_INTERVAL = 1000 / 30;
 
-        const animate = () => {
-            const w = sizeRef.current.w;
-            const h = sizeRef.current.h;
+        const animate = (now: number) => {
+            animFrameRef.current = requestAnimationFrame(animate);
+
+            // Throttle to ~30fps
+            if (now - lastFrameRef.current < FRAME_INTERVAL) return;
+            lastFrameRef.current = now;
+
+            const { w, h } = sizeRef.current;
             const centerX = w / 2;
-
             ctx.clearRect(0, 0, w, h);
 
-            // Only animate/draw if allowed
-            if (startAnimation) {
-                time += 0.01;
-                const mx = mouseRef.current.x;
-                const my = mouseRef.current.y;
+            if (!startAnimation) return;
 
-                particlesRef.current.forEach((p) => {
-                    // Determine movement based on direction
-                    p.baseX += p.speed * p.direction;
+            time += 0.015;
+            const mx = mouseRef.current.x;
+            const my = mouseRef.current.y;
+            const isMobile = isMobileRef.current;
 
-                    // Wrap logic
-                    if (p.direction === -1 && p.baseX < -50) {
-                        p.baseX = centerX - Math.random() * 50;
-                        p.baseY = Math.random() * h;
-                    } else if (p.direction === 1 && p.baseX > w + 50) {
-                        p.baseX = centerX + Math.random() * 50;
-                        p.baseY = Math.random() * h;
-                    }
+            // Batch all dots into a single path per opacity level for fewer draw calls
+            // But since opacity varies per particle, we draw individually — 
+            // however we skip sqrt by using squared distance
+            const particles = particlesRef.current;
+            const len = particles.length;
 
-                    // Fluid Wave Motion
-                    const cycle = time + p.offset;
-                    const waveY = Math.sin(p.baseX * 0.005 + cycle) * 20 +
-                        Math.sin(p.baseX * 0.01 + cycle * 0.5) * 10;
-                    const waveX = Math.cos(p.baseY * 0.005 + cycle) * 15;
+            for (let i = 0; i < len; i++) {
+                const p = particles[i];
 
-                    let targetX = p.baseX + waveX;
-                    let targetY = p.baseY + waveY;
+                // Move base position
+                p.baseX += p.speed * p.direction;
+                if (p.direction === -1 && p.baseX < -50) {
+                    p.baseX = centerX - Math.random() * 50;
+                    p.baseY = Math.random() * h;
+                } else if (p.direction === 1 && p.baseX > w + 50) {
+                    p.baseX = centerX + Math.random() * 50;
+                    p.baseY = Math.random() * h;
+                }
 
-                    // Mouse interaction
+                // Wave motion
+                const cycle = time + p.offset;
+                const waveY = Math.sin(p.baseX * 0.005 + cycle) * 20 +
+                    Math.sin(p.baseX * 0.01 + cycle * 0.5) * 10;
+                const waveX = Math.cos(p.baseY * 0.005 + cycle) * 15;
+
+                let targetX = p.baseX + waveX;
+                let targetY = p.baseY + waveY;
+
+                if (isMobile) {
+                    // Mobile: no interaction, just smooth wave
+                    p.x += (targetX - p.x) * ANIMATION_SPEED * 2;
+                    p.y += (targetY - p.y) * ANIMATION_SPEED * 2;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${DOT_COLOR[0]},${DOT_COLOR[1]},${DOT_COLOR[2]},0.12)`;
+                    ctx.fill();
+                } else {
+                    // Desktop: squared distance — no sqrt needed for culling
                     const dx = targetX - mx;
                     const dy = targetY - my;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const distSq = dx * dx + dy * dy;
 
-                    if (dist < REPULSION_RADIUS) {
+                    if (distSq < REPULSION_RADIUS_SQ) {
+                        // Only compute sqrt when we actually need it (inside radius)
+                        const dist = Math.sqrt(distSq);
                         const t = 1 - dist / REPULSION_RADIUS;
                         const force = t * t * REPULSION_STRENGTH;
                         const angle = Math.atan2(dy, dx);
@@ -158,22 +172,19 @@ export default function InteractiveDotGrid({ startAnimation = false }: { startAn
                     p.x += (targetX - p.x) * ANIMATION_SPEED * 2;
                     p.y += (targetY - p.y) * ANIMATION_SPEED * 2;
 
-                    // Draw ONLY if near cursor
-                    if (dist < REPULSION_RADIUS) {
+                    // Only draw particles near cursor
+                    if (distSq < REPULSION_RADIUS_SQ) {
+                        const dist = Math.sqrt(distSq);
                         const prox = 1 - dist / REPULSION_RADIUS;
-                        // Opacity fades out at edge of radius
-                        const alpha = prox * 0.6; // Max opacity 0.6
+                        const alpha = prox * 0.6;
                         const scale = 1 + prox * 1.5;
-
                         ctx.beginPath();
                         ctx.arc(p.x, p.y, p.size * scale, 0, Math.PI * 2);
-                        ctx.fillStyle = `rgba(${DOT_COLOR[0]}, ${DOT_COLOR[1]}, ${DOT_COLOR[2]}, ${alpha})`;
+                        ctx.fillStyle = `rgba(${DOT_COLOR[0]},${DOT_COLOR[1]},${DOT_COLOR[2]},${alpha})`;
                         ctx.fill();
                     }
-                });
+                }
             }
-
-            animFrameRef.current = requestAnimationFrame(animate);
         };
 
         let resizeTimeout: NodeJS.Timeout;
@@ -184,9 +195,9 @@ export default function InteractiveDotGrid({ startAnimation = false }: { startAn
 
         updateSize();
         window.addEventListener("resize", onResize);
-        window.addEventListener("scroll", onScroll);
-        document.addEventListener("mousemove", onMouseMove);
-        animate();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        document.addEventListener("mousemove", onMouseMove, { passive: true });
+        animFrameRef.current = requestAnimationFrame(animate);
 
         return () => {
             cancelAnimationFrame(animFrameRef.current);
