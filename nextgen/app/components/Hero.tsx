@@ -128,18 +128,18 @@ export default function Hero({ ready = true }: { ready?: boolean }) {
                     transition={{ duration: 0.7, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
                     className="flex flex-col sm:flex-row gap-5 items-center justify-center"
                 >
-                    <Link
-                        href="#riva"
-                        className="px-8 py-3 text-base font-medium text-[#4DBC1B] border border-[#4DBC1B]/60 rounded-full hover:bg-[#4DBC1B]/10 hover:border-[#4DBC1B] hover:shadow-[0_0_25px_rgba(77,188,27,0.3)] transition-all duration-300 hover:scale-105 magnetic-item"
+                    <button
+                        onClick={() => document.getElementById("riva")?.scrollIntoView({ behavior: "smooth" })}
+                        className="px-8 py-3 text-base font-medium text-[#4DBC1B] border border-[#4DBC1B]/60 rounded-full hover:bg-[#4DBC1B]/10 hover:border-[#4DBC1B] hover:shadow-[0_0_25px_rgba(77,188,27,0.3)] transition-all duration-300 hover:scale-105"
                     >
                         Explore Riva
-                    </Link>
-                    <Link
-                        href="#projects"
-                        className="px-8 py-3 text-base font-medium text-[#4DBC1B] border border-[#4DBC1B]/60 rounded-full hover:bg-[#4DBC1B]/10 hover:border-[#4DBC1B] hover:shadow-[0_0_25px_rgba(77,188,27,0.3)] transition-all duration-300 hover:scale-105 magnetic-item"
+                    </button>
+                    <button
+                        onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}
+                        className="px-8 py-3 text-base font-medium text-[#4DBC1B] border border-[#4DBC1B]/60 rounded-full hover:bg-[#4DBC1B]/10 hover:border-[#4DBC1B] hover:shadow-[0_0_25px_rgba(77,188,27,0.3)] transition-all duration-300 hover:scale-105"
                     >
                         Other Projects
-                    </Link>
+                    </button>
                 </motion.div>
             </motion.div>
 
