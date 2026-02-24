@@ -89,9 +89,7 @@ export default function AboutUs() {
                     viewport={{ once: true }}
                     className="text-gray-300 text-base md:text-xl leading-relaxed mb-8"
                 >
-                    We are a collective of student researchers, builders, and curious
-                    minds exploring high-performance computing, artificial intelligence,
-                    and the science behind large-scale systems.
+                    We’re a group of curious minds who don’t just learn AI from slides. We experiment with it. We train models on high-performance computing systems. We explore Artificial Intelligence, Machine Learning, Deep Learning and GenAI through hands-on projects, research ideas, and real-world challenges.
                 </motion.p>
                 <motion.p
                     initial={{ opacity: 0, y: 30 }}
@@ -100,10 +98,9 @@ export default function AboutUs() {
                     viewport={{ once: true }}
                     className="text-gray-500 text-sm md:text-base italic leading-relaxed max-w-xl mx-auto"
                 >
-                    We bring ambitious ideas to life through collaboration,
-                    experimentation, and real engineering. From first lines of code to
-                    large-scale systems, we help students grow into builders of tomorrow&apos;s
-                    technology.
+                    This is where curiosity turns into capability.
+                    Where ideas become projects.
+                    And where students grow into engineers who can actually build what they imagine. If you’ve ever wondered what it’s like to work with real supercomputing power, WELCOME!
                 </motion.p>
             </div>
 
