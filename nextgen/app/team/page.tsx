@@ -5,17 +5,18 @@ import Footer from "../components/Footer";
 import TeamMemberCard from "../components/TeamMemberCard";
 import InteractiveDotGrid from "../components/InteractiveDotGrid";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { useScrollContext } from "../components/SmoothScrollProvider";
 
 // Core Team
 const coreTeam = [
     { name: "Shreya Jain", role: "President", bio: "Leading the vision and strategy for NextGen.", socials: { linkedin: "https://www.linkedin.com/in/shreya-jain-25564a334/", github: "https://github.com/Shreya7078" } },
-    { name: "Samarth Shukla", role: "Vice President", bio: "Ensuring operational excellence and team cohesion.", socials: { linkedin: "#" } },
+    { name: "Samarth Shukla", role: "Vice President", bio: "Ensuring operational excellence and team cohesion.", socials: { linkedin: "https://www.linkedin.com/in/samarth-shukla-35b87a31b/", github: "https://github.com/Samx178" } },
+    { name: "Vinayank Rastogi", role: "Technical Head", bio: "Expert in AI/ML architectures and research.", socials: { linkedin: "https://www.linkedin.com/in/vinayakrastogi3010", github: "https://github.com/VinVorteX" } },
     { name: "Prateek Rai", role: "Technical Head", bio: "Overseeing technical projects and innovation.", socials: { linkedin: "https://www.linkedin.com/in/prateek-rai-969136342/", github: "https://github.com/Prat260104" } },
-    { name: "Vinayank Rastogi", role: "Technical Head", bio: "Expert in AI/ML architectures and research.", socials: { github: "#" } },
     { name: "Ronak Goel", role: "Technical Head", bio: "Driving technical excellence and innovation.", socials: { linkedin: "https://www.linkedin.com/in/ronak-goel", github: "https://github.com/Ronak-Goel-2005" } },
-    { name: "Ujjawal Tyagi", role: "PR Head", bio: "Managing public relations and outreach.", socials: { twitter: "#", linkedin: "#" } },
+    { name: "Ujjawal Tyagi", role: "PR Head", bio: "Managing public relations and outreach.", socials: { linkedin: "https://www.linkedin.com/in/ujjawal-tyagi-1399912a5/", github: "https://github.com/UjjawalTyagi22" } },
     { name: "Srashti Gupta", role: "Event Head", bio: "Organizing hackathons and tech talks.", socials: { linkedin: "https://www.linkedin.com/in/srashti-gupta-114b36325", github: "https://github.com/Srashticodes" } },
     { name: "Vidisha Goel", role: "Event Head", bio: "Coordinating logistics and attendee experience.", socials: { linkedin: "https://www.linkedin.com/in/vidisha-goel-b57a1a328/", github: "https://github.com/Vidisha21Goel" } },
     { name: "Preeti Singh", role: "Graphics Head", bio: "Creating visually stunning designs and graphics.", socials: { linkedin: "https://www.linkedin.com/in/preeti-singh-9b8554328", github: "https://github.com/preeti2428" } },
@@ -24,53 +25,63 @@ const coreTeam = [
 
 // PDF Data based Domain Teams (Exact Sequence)
 const eventTeam = [
-    { name: "Suryank Batham", role: "Event Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/suryank-batham-814544328/", github: "https://github.com/SuryankB" } },
     { name: "Ravi Kishan", role: "Event Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/ravi-kishan-a880a5328", github: "https://github.com/RAVI-KISHAN-ui" } },
+    { name: "Suryank Batham", role: "Event Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/suryank-batham-814544328/", github: "https://github.com/SuryankB" } },
     { name: "Sushant Sharma", role: "Event Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/sushantsharma29/", github: "https://github.com/KRISURA" } },
     { name: "Arpit Abhinav Chauhan", role: "Event Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/arpit2527", github: "https://github.com/apt2527" } },
-    { name: "Vaishali Singh", role: "Event Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/vaishali-singh-3470b5382/", github: "https://github.com/vaishalisingh102005-cc" } },
+    { name: "Vaishali Singh", role: "Event Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/vaishali-singh-3470b5382/", github: "https://github.com/vaishalisingh102005-coder" } },
     { name: "Khushi Bhakuni", role: "Event Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/khushi-1-bhakuni", github: "https://github.com/khushi1bhakuni" } },
     { name: "Saurabh Kumar Gupta", role: "Event Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/saurabh-kumar-381b82381/", github: "https://github.com/Saurabh0770" } },
+    { name: "Aadrika Gupta", role: "Event Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/aadrika-gupta-9247b3381/", github: "https://github.com/AadrikaGupta234" } },
+    { name: "Sujal Gupta", role: "Event Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/sujal-gupta-48b054378/", github: "https://github.com/sujalgupta113" } },
+    { name: "Kartikeya Sahrawat", role: "Event Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/kartikeya-sahrawat-4ab780368/", github: "https://github.com/kartikeya-sahrawat" } },
+    { name: "Aryan Singh", role: "Event Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/aryan-singh-91ba69381/", github: "https://github.com/ARYANSINGH926" } },
 ];
 
 const graphicsTeam = [
-    { name: "Raj Ojha", role: "Graphics Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/raj-ojha-14a991327/", github: "https://www.linkedin.com/in/raj-ojha-14a9" } },
-    { name: "Kishan Singh", role: "Graphics Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/kishansingh7x/", github: "https://github.com/kishansingh7x" } },
-    { name: "Arjun", role: "Graphics Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/arjun-deo-singh-66ba65381/", github: "https://github.com/intruder1516y" } },
-    { name: "Tooba Ashfaque", role: "Graphics Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/tooba-ashfaque/", github: "https://github.com/too-baa" } },
+    { name: "Raj Ojha", role: "Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/raj-ojha-14a991327/", github: "https://www.linkedin.com/in/raj-ojha-14a9" } },
+    { name: "Kishan Singh", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/kishansingh7x/", github: "https://github.com/kishansingh7x" } },
+    { name: "Arjun", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/arjun-deo-singh-66ba65381/", github: "https://github.com/intruder1516y" } },
+    { name: "Tooba Ashfaque", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/tooba-ashfaque/", github: "https://github.com/too-baa" } },
+    { name: "Devang Mishra", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/devang-mishra-04a8a4381", github: "https://github.com/devang738" } },
 ];
 
 const prTeam = [
-    { name: "Rudrika Singhal", role: "PR Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/rudrika-singhal-74a705328/" } },
-    { name: "Lucky Diwakar", role: "PR Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/lucky-diwakar-8b7713381/", github: "https://github.com/Lucky947-git" } },
+    { name: "Rudrika Singhal", role: "Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/rudrika-singhal-74a705328/" } },
+    { name: "Lucky Diwakar", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/lucky-diwakar-8b7713381/", github: "https://github.com/Lucky947-git" } },
+    { name: "Chirag Tejasvi", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/chirag-tejasvi-939581376/", github: "https://github.com/pathfinder1one" } },
 ];
 
 const technicalTeam = [
     { name: "Himadri Sharma", role: "Member", bio: "3rd Year", socials: { linkedin: "https://www.linkedin.com/in/himadri-sharma-5569912a5", github: "https://github.com/himadritech21" } },
     { name: "Vaishnavi Mishra", role: "Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/vsnvi11/", github: "https://github.com/the11dev" } },
     { name: "Sarthak Sharma", role: "Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/sarthaksharmakiet", github: "https://github.com/Sarthak752008" } },
-    { name: "Akshit vats", role: "Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/akshitvats026", github: "https://github.com/Akshitvats026" } },
+    { name: "Akshit Vats", role: "Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/akshitvats026", github: "https://github.com/Akshitvats026" } },
     { name: "Kartikey Kumar", role: "Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/er-kk/", github: "https://github.com/kartikey-kk" } },
-    { name: "Ashwani kumar Jaiswal", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ashwanikumarj94/", github: "https://github.com/heyy-ashwani" } },
-    { name: "Ritik Chaudhary", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ritik-chaudhary-2kk7/", github: "https://github.com/Ritik-AIML" } },
-    { name: "Anushka Gupta", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/anushka-gupta-616515329/", github: "https://github.com/anushkagupta200615-j" } },
-    { name: "Sandhya singh", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/sandhya-singh-3019832a4/", github: "https://github.com/sandhyas6515" } },
-    { name: "Ayush Pathak", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ayush-pathak-0988b3381", github: "https://github.com/ayushpathak-957" } },
-    { name: "Chirag Gupta", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/chiraq-qupta-aa3497379/", github: "https://github.com/chirag-gupta-07" } },
-    { name: "Ayush Pathak", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ayush-pathak-0988b3381/", github: "https://github.com/ayushpathak-957" } },
-    { name: "Atul Kushwaha", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/atul-kushwaha-9b0290381/", github: "https://github.com/atulkushwaha0112-py" } },
+    { name: "Dakshita Singh", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/dakshita-singh-b2421b383/", github: "https://github.com/dakshita-singh-codes" } },
+    { name: "Niyati Jain", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/niyati-jain-792808385/", github: "https://github.com/niy-ati" } },
+    { name: "Sandhya Singh", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/sandhya-singh-3019832a4/" } },
     { name: "Ankit Kumar Singh", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ankit-kumar-singh-927a81381", github: "https://github.com/ankit3890" } },
-    { name: "Dakshita Singh", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/dakshita-singh-b24216383/", github: "https://github.com/dakshita-singh-codes" } },
-    { name: "Divyansh Maheshwari", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/divyansh-maheshwari-6493b2381/", github: "https://github.com/divyanshmaheshwari61" } },
-    { name: "Akansh Dwivedi", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/akansh-dwivedi-b79501355/", github: "https://github.com/Akanshdwi?tab=reposit" } },
-    { name: "Aalishba", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/aalishba-khan-45758a27a/", github: "https://github.com/aalishba-7" } },
-    { name: "Khushi Tripathi", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/khushi-tripathi-b6117636a/", github: "https://github.com/Khushi Tripathi762" } },
+    { name: "Divyansh Maheshwari", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/divyansh-maheshwari-6493b2381/", github: "https://github.com/divyanshmaheshwari617-cell" } },
+    { name: "Ayush Pathak", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ayush-pathak-0988b3381/", github: "https://github.com/ayushpathak-957" } },
+    { name: "Aalishba Khan", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/aalishba-khan-45758a27a/", github: "https://github.com/aalishba-7" } },
+    { name: "Ashwani Kumar Jaiswal", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ashwanikumarj94/", github: "https://github.com/heyy-ashwani" } },
+    { name: "Shubhangi Srivastava", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/shubhangi-srivastava-436861380", github: "https://github.com/shubhangi-1010" } },
+    { name: "Aman Chaudhary", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/aman-chaudhary-076216382/", github: "https://github.com/AmanAsh-207" } },
+    { name: "Anushka Gupta", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/anushka-gupta-616515329/", github: "https://github.com/anushkagupta200615-jpg" } },
+    { name: "Chirag Gupta", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/chirag-gupta-aa3497379/", github: "https://github.com/chirag-gupta-07" } },
+    { name: "Atul Kushwaha", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/atul-kushwaha-9b0290381/", github: "https://github.com/atulkushwaha0112-py" } },
+    { name: "Khushi Tripathi", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/khushi-tripathi-b6117636a/", github: "https://github.com/KhushiTripathi762" } },
+    { name: "Rishu Soni Poddar", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/rishu-soni-207694325/", github: "https://github.com/Rishu-Soni" } },
+    { name: "Garima Singh", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/garima-singh-715929382/", github: "https://github.com/garimasingh4448-code" } },
+    { name: "Ritik Chaudhary", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ritik-chaudhary-2kk7/", github: "https://github.com/Ritik-AIML" } },
+    { name: "Akansh Dwivedi", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/akansh-dwivedi-b79501355/", github: "https://github.com/Akanshdwi" } },
 ];
 
 const treasurerTeam = [
     { name: "Isha Tyagi", role: "Treasurer Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/isha-tyagi-989829328/", github: "https://github.com/Ishatyagi06" } },
     { name: "Swayam Srivastava", role: "Treasurer Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/swayam-srivastava-8244a0328", github: "https://github.com/Swayam17032005" } },
-    { name: "Rishi Patwa", role: "Treasurer Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/rishi-patwa-437b0b328/", github: "https://share.google/v4JoxEWIZSq0zrmS" } },
+    { name: "Rishi Patwa", role: "Treasurer Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/rishi-patwa-437b0b328/" } },
     { name: "Deepak Joshi", role: "Treasurer Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/deepak-joshi-23a42a327/", github: "https://github.com/Deepak-Joshii" } },
 ];
 
@@ -135,6 +146,14 @@ function DomainSection({ title, members, color, borderColor }: { title: string, 
 }
 
 export default function TeamPage() {
+    const { scrollTo } = useScrollContext();
+    const [showTop, setShowTop] = useState(false);
+
+    useEffect(() => {
+        const onScroll = () => setShowTop(window.scrollY > 300);
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
     return (
         <main className="min-h-screen bg-black text-white selection:bg-[#4DBC1B]/30 relative">
             <Navbar />
@@ -202,6 +221,23 @@ export default function TeamPage() {
             </section>
 
             <Footer />
+
+            {/* Scroll-to-top button */}
+            <AnimatePresence>
+                {showTop && (
+                    <motion.button
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        transition={{ duration: 0.3 }}
+                        onClick={() => scrollTo(0, { duration: 1.4 })}
+                        className="fixed bottom-8 right-6 z-50 p-3 rounded-full bg-[#4DBC1B]/20 border border-[#4DBC1B]/50 text-[#4DBC1B] hover:bg-[#4DBC1B]/30 hover:shadow-[0_0_20px_rgba(77,188,27,0.4)] transition-all duration-300"
+                        aria-label="Scroll to top"
+                    >
+                        <ChevronUp className="w-5 h-5" />
+                    </motion.button>
+                )}
+            </AnimatePresence>
         </main>
     );
 }
