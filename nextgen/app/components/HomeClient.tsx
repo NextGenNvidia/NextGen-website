@@ -10,11 +10,15 @@ export default function HomeClient({
 }: {
     children: React.ReactNode;
 }) {
-    const [loading, setLoading] = useState(true);
+    // Skip loader if we've already shown it this session
+    const [loading, setLoading] = useState(() => {
+        if (typeof window === "undefined") return false;
+        return !sessionStorage.getItem("nextgen_loader_done");
+    });
 
     return (
         <>
-            {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
+            {loading && <LoadingScreen onComplete={() => { sessionStorage.setItem("nextgen_loader_done", "1"); setLoading(false); }} />}
             {!loading && (
                 <main className="flex min-h-screen flex-col">
                     <Navbar ready={true} />

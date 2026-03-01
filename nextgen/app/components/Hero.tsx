@@ -4,6 +4,7 @@ import { useState, useEffect, memo, useCallback } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import InteractiveDotGrid from "./InteractiveDotGrid";
+import { useScrollContext } from "./SmoothScrollProvider";
 
 // 1. Typing Logic ko isolate kiya taaki pura page re-render na ho (Performance Fix)
 const TypewriterText = memo(({
@@ -58,26 +59,29 @@ TypewriterText.displayName = "TypewriterText";
 // 2. Background Grid ko cache (memoize) kiya
 const MemoizedGrid = memo(InteractiveDotGrid);
 
-export default function Hero({ ready = true }: { ready?: boolean }) {
+export default function Hero({ ready = true, skipAnimation = false }: { ready?: boolean; skipAnimation?: boolean }) {
+    const { scrollTo } = useScrollContext();
     const { scrollYProgress } = useScroll();
     const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
     const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.95]);
     const heroY = useTransform(scrollYProgress, [0, 0.15], [0, -50]);
 
-    const [startLine1, setStartLine1] = useState(false);
-    const [line1Done, setLine1Done] = useState(false);
-    const [line2Done, setLine2Done] = useState(false);
+    const [startLine1, setStartLine1] = useState(skipAnimation);
+    const [line1Done, setLine1Done] = useState(skipAnimation);
+    const [line2Done, setLine2Done] = useState(skipAnimation);
 
-    // Callbacks ko cache kiya taaki child components re-render na ho
     const handleLine1Done = useCallback(() => setLine1Done(true), []);
-    const handleLine2Done = useCallback(() => setLine2Done(true), []);
+    const handleLine2Done = useCallback(() => {
+        setLine2Done(true);
+        // Mark typing animation as done for this session
+        sessionStorage.setItem("nextgen_hero_done", "1");
+    }, []);
 
     useEffect(() => {
-        if (!ready) return;
-        // Small delay to allow initial paint to settle before starting animation
+        if (!ready || skipAnimation) return;
         const t = setTimeout(() => setStartLine1(true), 100);
         return () => clearTimeout(t);
-    }, [ready]);
+    }, [ready, skipAnimation]);
 
     const showUI = line2Done;
 
@@ -129,13 +133,13 @@ export default function Hero({ ready = true }: { ready?: boolean }) {
                     className="flex flex-col sm:flex-row gap-5 items-center justify-center"
                 >
                     <button
-                        onClick={() => document.getElementById("riva")?.scrollIntoView({ behavior: "smooth" })}
+                        onClick={() => scrollTo("#riva", { offset: -80 })}
                         className="px-8 py-3 text-base font-medium text-[#4DBC1B] border border-[#4DBC1B]/60 rounded-full hover:bg-[#4DBC1B]/10 hover:border-[#4DBC1B] hover:shadow-[0_0_25px_rgba(77,188,27,0.3)] transition-all duration-300 hover:scale-105"
                     >
                         Explore Riva
                     </button>
                     <button
-                        onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}
+                        onClick={() => scrollTo("#projects", { offset: -80 })}
                         className="px-8 py-3 text-base font-medium text-[#4DBC1B] border border-[#4DBC1B]/60 rounded-full hover:bg-[#4DBC1B]/10 hover:border-[#4DBC1B] hover:shadow-[0_0_25px_rgba(77,188,27,0.3)] transition-all duration-300 hover:scale-105"
                     >
                         Other Projects

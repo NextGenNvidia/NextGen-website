@@ -4,24 +4,27 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import EventCard from "../components/EventCard";
 import InteractiveDotGrid from "../components/InteractiveDotGrid";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import { ChevronUp } from "lucide-react";
+import { useScrollContext } from "../components/SmoothScrollProvider";
 
 const upcomingEvents = [
     {
-        title: "NextGen Hackathon 2026",
-        date: "March 15, 2026",
-        time: "9:00 AM - 9:00 PM",
-        location: "Main Auditorium",
-        description: "Join us for a 12-hour coding marathon to build innovative solutions using AI and cloud computing.",
+        title: "AI Arena Hackathon 2026",
+        date: "March 19-20, 2026",
+        time: "11:00 AM - 11:00 AM",
+        location: "Central Library",
+        description: "The AI Arena: Gotham Edition is a 24-hour National Level Machine Learning Hackathon followed by an exclusive AI Summit featuring industry leaders and innovators.",
         image: "https://images.unsplash.com/photo-1504384308090-c54be3852f33?auto=format&fit=crop&q=80&w=600",
         status: "upcoming" as const,
-        registrationLink: "#"
+        registrationLink: "https://unstop.com/hackathons/ai-arena-gotham-edition-kiet-group-of-institutions-1640378?lb=i1Fw6PAU"
     },
     {
-        title: "AI Workshop Series: Deep Learning",
-        date: "April 02, 2026",
-        time: "2:00 PM - 5:00 PM",
-        location: "Lab 304",
+        title: "AI Summit 2026",
+        date: "MArch 20, 2026",
+        time: "11:00 AM - 5:00 PM",
+        location: "Auditorium",
         description: "A hands-on workshop diving deep into neural networks and training models with PyTorch.",
         image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80&w=600",
         status: "upcoming" as const,
@@ -61,6 +64,14 @@ const pastEvents = [
 ];
 
 export default function EventsPage() {
+    const { scrollTo } = useScrollContext();
+    const [showTop, setShowTop] = useState(false);
+
+    useEffect(() => {
+        const onScroll = () => setShowTop(window.scrollY > 300);
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
     return (
         <main className="min-h-screen bg-black text-white selection:bg-[#4DBC1B]/30 relative">
             <Navbar />
@@ -126,6 +137,23 @@ export default function EventsPage() {
             </section>
 
             <Footer />
+
+            {/* Scroll-to-top button */}
+            <AnimatePresence>
+                {showTop && (
+                    <motion.button
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        transition={{ duration: 0.3 }}
+                        onClick={() => scrollTo(0, { duration: 1.4 })}
+                        className="fixed bottom-8 right-6 z-50 p-3 rounded-full bg-[#4DBC1B]/20 border border-[#4DBC1B]/50 text-[#4DBC1B] hover:bg-[#4DBC1B]/30 hover:shadow-[0_0_20px_rgba(77,188,27,0.4)] transition-all duration-300"
+                        aria-label="Scroll to top"
+                    >
+                        <ChevronUp className="w-5 h-5" />
+                    </motion.button>
+                )}
+            </AnimatePresence>
         </main>
     );
 }

@@ -10,6 +10,11 @@
   --foreground: #ffffff;
 }
 
+/* Prevent native CSS smooth scroll competing with Lenis */
+html {
+  scroll-behavior: auto !important;
+}
+
 /* --- Smooth Scroll --- */
 html.lenis,
 html.lenis body {

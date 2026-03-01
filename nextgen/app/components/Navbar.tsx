@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useScrollContext } from "./SmoothScrollProvider";
 
 const navLinks = [
-    { name: "About Us", href: "/#about" },
+    { name: "Home", href: "/home", id: "home" },
     { name: "Team", href: "/team" },
     { name: "Events", href: "/events" },
 ];
@@ -18,6 +20,10 @@ export default function Navbar({ ready: parentReady = true }: { ready?: boolean 
     const [scrollReady, setScrollReady] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+    const { scrollTo } = useScrollContext();
+    const router = useRouter();
+    const pathname = usePathname();
+
     const { scrollY } = useScroll();
 
     useMotionValueEvent(scrollY, "change", (latest) => {
@@ -25,7 +31,7 @@ export default function Navbar({ ready: parentReady = true }: { ready?: boolean 
         const diff = latest - lastScrollY.current;
         if (diff > 5 && latest > 100) {
             setHidden(true);
-            setMobileMenuOpen(false); // Close menu on scroll down
+            setMobileMenuOpen(false);
         } else if (diff < -5) {
             setHidden(false);
         }
@@ -41,6 +47,25 @@ export default function Navbar({ ready: parentReady = true }: { ready?: boolean 
         }, 3500);
         return () => clearTimeout(timer);
     }, [parentReady]);
+
+    const handleAnchorClick = useCallback(
+        (e: React.MouseEvent, link: { href: string; id?: string }) => {
+            if (!link.id) return; // regular page link
+
+            e.preventDefault();
+            setMobileMenuOpen(false);
+
+            if (pathname === "/") {
+                // Already on home — smooth scroll directly
+                scrollTo(`#${link.id}`, { offset: -80 });
+            } else {
+                // Store the scroll target then navigate to home
+                sessionStorage.setItem("pendingScroll", link.id);
+                router.push("/");
+            }
+        },
+        [pathname, router, scrollTo]
+    );
 
     return (
         <>
@@ -67,6 +92,7 @@ export default function Navbar({ ready: parentReady = true }: { ready?: boolean 
                         <Link
                             key={link.name}
                             href={link.href}
+                            onClick={(e) => link.id ? handleAnchorClick(e, link) : undefined}
                             className="flex items-center gap-1 text-sm font-medium text-gray-300 hover:text-[#4DBC1B] transition-colors px-4 py-2 rounded-md group"
                         >
                             {link.name}
@@ -107,7 +133,13 @@ export default function Navbar({ ready: parentReady = true }: { ready?: boolean 
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                onClick={() => setMobileMenuOpen(false)}
+                                onClick={(e) => {
+                                    if (link.id) {
+                                        handleAnchorClick(e, link);
+                                    } else {
+                                        setMobileMenuOpen(false);
+                                    }
+                                }}
                                 className="text-2xl font-bold text-gray-300 hover:text-[#4DBC1B] transition-colors"
                             >
                                 {link.name}
