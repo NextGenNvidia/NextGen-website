@@ -69,6 +69,23 @@ export default function Navbar({ ready: parentReady = true }: { ready?: boolean 
 
     return (
         <>
+            {/* Announcement Bar */}
+            <div className="fixed top-0 left-0 right-0 z-[60] flex items-center justify-center gap-2 bg-black/90 backdrop-blur-sm border-b border-[#4DBC1B]/20 py-1.5 px-4 text-xs sm:text-sm font-medium text-gray-200">
+                <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4DBC1B] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#4DBC1B]"></span>
+                </span>
+                <span> AI ARENA Registrations Open -</span>
+                <a
+                    href="https://unstop.com/hackathons/ai-arena-gotham-edition-kiet-group-of-institutions-1640378?lb=i1Fw6PAU"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#4DBC1B] font-semibold hover:underline hover:text-[#5fd620] transition-colors"
+                >
+                    Register Now →
+                </a>
+            </div>
+
             <motion.nav
                 initial={{ y: -100, opacity: 0 }}
                 animate={{
@@ -76,7 +93,7 @@ export default function Navbar({ ready: parentReady = true }: { ready?: boolean 
                     opacity: hidden ? 0 : 1,
                 }}
                 transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-                className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 md:px-12 transition-colors duration-500 ${scrolled || mobileMenuOpen
+                className={`fixed top-[32px] left-0 right-0 z-50 flex items-center justify-between px-6 py-4 md:px-12 transition-colors duration-500 ${scrolled || mobileMenuOpen
                     ? "bg-black/80 backdrop-blur-xl shadow-[0_1px_0_rgba(77,188,27,0.1)]"
                     : "bg-black/30 backdrop-blur-md"
                     }`}

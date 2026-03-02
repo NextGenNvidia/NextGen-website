@@ -22,7 +22,7 @@ const upcomingEvents = [
     },
     {
         title: "AI Summit 2026",
-        date: "MArch 20, 2026",
+        date: "March 20, 2026",
         time: "11:00 AM - 5:00 PM",
         location: "Auditorium",
         description: "A hands-on workshop diving deep into neural networks and training models with PyTorch.",

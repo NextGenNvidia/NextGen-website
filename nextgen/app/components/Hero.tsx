@@ -118,7 +118,7 @@ export default function Hero({ ready = true, skipAnimation = false }: { ready?: 
                     style={{ textShadow: "0 0 40px rgba(77, 188, 27, 0.3)" }}
                 >
                     <TypewriterText
-                        text="Your Journey Starts Here"
+                        text="AI ARENA is Live – Build. Compete. Conquer."
                         speed={50}
                         startNow={line1Done}
                         onDone={handleLine2Done}
@@ -130,20 +130,33 @@ export default function Hero({ ready = true, skipAnimation = false }: { ready?: 
                     initial={{ opacity: 0, y: 30 }}
                     animate={showUI ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.7, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-                    className="flex flex-col sm:flex-row gap-5 items-center justify-center"
+                    className="flex flex-col items-center gap-4"
                 >
-                    <button
-                        onClick={() => scrollTo("#riva", { offset: -80 })}
-                        className="px-8 py-3 text-base font-medium text-[#4DBC1B] border border-[#4DBC1B]/60 rounded-full hover:bg-[#4DBC1B]/10 hover:border-[#4DBC1B] hover:shadow-[0_0_25px_rgba(77,188,27,0.3)] transition-all duration-300 hover:scale-105"
+                    {/* Primary CTA */}
+                    <a
+                        href="https://unstop.com/hackathons/ai-arena-gotham-edition-kiet-group-of-institutions-1640378?lb=i1Fw6PAU"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-10 py-3 text-base font-semibold text-black bg-[#4DBC1B] rounded-full hover:bg-[#5fd620] hover:shadow-[0_0_30px_rgba(77,188,27,0.5)] transition-all duration-300 hover:scale-105"
                     >
-                        Explore Riva
-                    </button>
-                    <button
-                        onClick={() => scrollTo("#projects", { offset: -80 })}
-                        className="px-8 py-3 text-base font-medium text-[#4DBC1B] border border-[#4DBC1B]/60 rounded-full hover:bg-[#4DBC1B]/10 hover:border-[#4DBC1B] hover:shadow-[0_0_25px_rgba(77,188,27,0.3)] transition-all duration-300 hover:scale-105"
-                    >
-                        Other Projects
-                    </button>
+                        Register for AI ARENA
+                    </a>
+
+                    {/* Secondary buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 items-center">
+                        <button
+                            onClick={() => scrollTo("#riva", { offset: -80 })}
+                            className="px-8 py-3 text-base font-medium text-[#4DBC1B] border border-[#4DBC1B]/60 rounded-full hover:bg-[#4DBC1B]/10 hover:border-[#4DBC1B] hover:shadow-[0_0_25px_rgba(77,188,27,0.3)] transition-all duration-300 hover:scale-105"
+                        >
+                            Explore Riva
+                        </button>
+                        <button
+                            onClick={() => scrollTo("#projects", { offset: -80 })}
+                            className="px-8 py-3 text-base font-medium text-[#4DBC1B] border border-[#4DBC1B]/60 rounded-full hover:bg-[#4DBC1B]/10 hover:border-[#4DBC1B] hover:shadow-[0_0_25px_rgba(77,188,27,0.3)] transition-all duration-300 hover:scale-105"
+                        >
+                            Other Projects
+                        </button>
+                    </div>
                 </motion.div>
             </motion.div>
 
