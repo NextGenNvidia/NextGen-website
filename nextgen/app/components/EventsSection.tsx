@@ -19,9 +19,9 @@ const events = [
     },
     {
         title: "Hackathon",
-        subtitle: "48-Hour Build",
+        subtitle: "24-Hour Build",
         image: "https://images.unsplash.com/photo-1504384308090-c54be3852f33?auto=format&fit=crop&q=80&w=600",
-        desc: "Collaborate, innovate, and build amazing projects in our annual 48-hour coding marathon.",
+        desc: "Collaborate, innovate, and build amazing projects in our annual 24-hour coding marathon.",
     },
     {
         title: "Research Symposium",
@@ -129,9 +129,6 @@ export default function EventsSection() {
                                     {ev.desc}
                                 </p>
                                 <div className="mt-auto pt-4 border-t border-white/10">
-                                    <button disabled className="block w-full py-2 text-center text-sm font-medium text-gray-500 bg-white/5 rounded-lg cursor-not-allowed">
-                                        Event Ended
-                                    </button>
                                 </div>
                             </div>
                         </motion.div>
