@@ -10,7 +10,7 @@ import { ChevronUp } from "lucide-react";
 import { useScrollContext } from "../components/SmoothScrollProvider";
 
 const upcomingEvents = [
-    ,
+    
 ];
 
 const pastEvents = [
