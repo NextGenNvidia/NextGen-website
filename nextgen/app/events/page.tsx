@@ -10,26 +10,7 @@ import { ChevronUp } from "lucide-react";
 import { useScrollContext } from "../components/SmoothScrollProvider";
 
 const upcomingEvents = [
-    {
-        title: "AI Arena Hackathon 2026",
-        date: "March 19-20, 2026",
-        time: "11:00 AM - 11:00 AM",
-        location: "Central Library",
-        description: "The AI Arena: Gotham Edition is a 24-hour National Level Machine Learning Hackathon followed by an exclusive AI Summit featuring industry leaders and innovators.",
-        image: "https://images.unsplash.com/photo-1504384308090-c54be3852f33?auto=format&fit=crop&q=80&w=600",
-        status: "upcoming" as const,
-        registrationLink: "https://unstop.com/hackathons/ai-arena-gotham-edition-kiet-group-of-institutions-1640378?lb=i1Fw6PAU"
-    },
-    {
-        title: "AI Summit 2026",
-        date: "March 20, 2026",
-        time: "11:00 AM - 5:00 PM",
-        location: "Auditorium",
-        description: "A hands-on workshop diving deep into neural networks and training models with PyTorch.",
-        image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80&w=600",
-        status: "upcoming" as const,
-        registrationLink: "#"
-    },
+    
     {
         title: "Tech Talk: Future of Quantum Computing",
         date: "April 20, 2026",
@@ -44,22 +25,24 @@ const upcomingEvents = [
 
 const pastEvents = [
     {
-        title: "Intro to Cloud Computing",
-        date: "January 10, 2026",
-        time: "10:00 AM - 1:00 PM",
-        location: "Virtual",
-        description: "Covered the basics of AWS and Azure, deploying first web apps to the cloud.",
-        image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=600",
+        title: "AI Arena Hackathon 2026",
+        date: "March 19-20, 2026",
+        time: "11:00 AM - 11:00 AM",
+        location: "Central Library",
+        description: "The AI Arena: Gotham Edition is a 24-hour National Level Machine Learning Hackathon followed by an exclusive AI Summit featuring industry leaders and innovators.",
+        image: "https://images.unsplash.com/photo-1504384308090-c54be3852f33?auto=format&fit=crop&q=80&w=600",
         status: "past" as const,
+        registrationLink: "https://unstop.com/hackathons/ai-arena-gotham-edition-kiet-group-of-institutions-1640378?lb=i1Fw6PAU"
     },
     {
-        title: "Cybersecurity Awareness Week",
-        date: "December 05, 2025",
-        time: "All Day",
-        location: "Campus Wide",
-        description: "A week-long event series focusing on digital safety, encryption, and ethical hacking.",
-        image: "https://images.unsplash.com/photo-1563206767-5b1d972b9fb9?auto=format&fit=crop&q=80&w=600",
+        title: "AI Summit 2026",
+        date: "March 20, 2026",
+        time: "11:00 AM - 5:00 PM",
+        location: "Auditorium",
+        description: "AI Summit 2026 explored Responsible AI and digital transformation. Through expert panels and power talks, the event fostered industry-academia connections and prepared attendees for an AI-driven future.",
+        image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80&w=600",
         status: "past" as const,
+        registrationLink: "#"
     }
 ];
 

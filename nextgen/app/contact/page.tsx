@@ -87,13 +87,13 @@ export default function Contact() {
         {
             icon: Mail,
             label: "Email",
-            value: "contact@nextgensupercomputing.org",
-            href: "mailto:contact@nextgensupercomputing.org",
+            value: "dgxcoe@kiet.edu",
+            href: "mailto:dgxcoe@kiet.edu",
         },
         {
             icon: MapPin,
             label: "Location",
-            value: "Your School/University",
+            value: "KIET Deemed To Be University,Ghaziabad",
             href: "#",
         },
         {
@@ -133,11 +133,10 @@ export default function Contact() {
                                     ref={(el) => {
                                         letterRefs.current[index] = el;
                                     }}
-                                    className={`relative transition-all duration-200 ${
-                                        hoveredLetterIndex === index
+                                    className={`relative transition-all duration-200 ${hoveredLetterIndex === index
                                             ? "text-[#4DBC1B]/60 drop-shadow-[0_0_20px_rgba(77,188,27,0.4)] scale-125"
                                             : "text-[#4DBC1B]/8 scale-100"
-                                    }`}
+                                        }`}
                                 >
                                     {letter}
                                 </div>
