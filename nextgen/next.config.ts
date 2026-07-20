@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  transpilePackages: ["three", "@react-three/fiber", "@react-three/drei", "three-stdlib"],
+  turbopack: {
+    root: __dirname,
+  },
 };
 
 export default nextConfig;

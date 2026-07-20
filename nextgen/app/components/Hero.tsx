@@ -6,7 +6,6 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import InteractiveDotGrid from "./InteractiveDotGrid";
 import { useScrollContext } from "./SmoothScrollProvider";
 
-// 1. Typing Logic ko isolate kiya taaki pura page re-render na ho (Performance Fix)
 const TypewriterText = memo(({
     text,
     speed = 50,
@@ -36,8 +35,7 @@ const TypewriterText = memo(({
             }
         }, speed);
         return () => clearInterval(interval);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [text, speed, startNow]); // onDone ko exclude kiya taaki interval reset na ho
+    }, [text, speed, startNow]);
 
     return (
         <>
@@ -56,7 +54,7 @@ const TypewriterText = memo(({
 });
 TypewriterText.displayName = "TypewriterText";
 
-// 2. Background Grid ko cache (memoize) kiya
+// Bg Grid ko cache (memoize)
 const MemoizedGrid = memo(InteractiveDotGrid);
 
 export default function Hero({ ready = true, skipAnimation = false }: { ready?: boolean; skipAnimation?: boolean }) {
@@ -91,7 +89,7 @@ export default function Hero({ ready = true, skipAnimation = false }: { ready?: 
                 <MemoizedGrid startAnimation={showUI} />
             </div>
 
-            {/* Subtle ambient glow — loops */}
+            {/* Subtle ambient glow */}
             <motion.div
                 animate={{ opacity: [0.06, 0.12, 0.06], scale: [1, 1.1, 1] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -102,7 +100,6 @@ export default function Hero({ ready = true, skipAnimation = false }: { ready?: 
                 style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
                 className="relative z-10 max-w-5xl mx-auto"
             >
-                {/* Heading Line 1 — Isolated Typing Component */}
                 <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight text-white mb-3 min-h-[1.2em]">
                     <TypewriterText
                         text="From Code to Supercomputers"
@@ -112,13 +109,12 @@ export default function Hero({ ready = true, skipAnimation = false }: { ready?: 
                     />
                 </h1>
 
-                {/* Heading Line 2 — Isolated Typing Component */}
                 <h2
                     className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight text-[#4DBC1B] mb-8 md:mb-12 min-h-[1.2em]"
                     style={{ textShadow: "0 0 40px rgba(77, 188, 27, 0.3)" }}
                 >
                     <TypewriterText
-                        text="AI ARENA is Live – Build. Compete. Conquer."
+                        text="Your Journey Starts Here"
                         speed={50}
                         startNow={line1Done}
                         onDone={handleLine2Done}
@@ -132,16 +128,6 @@ export default function Hero({ ready = true, skipAnimation = false }: { ready?: 
                     transition={{ duration: 0.7, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
                     className="flex flex-col items-center gap-4"
                 >
-                    {/* Primary CTA */}
-                    <a
-                        href="https://unstop.com/hackathons/ai-arena-gotham-edition-kiet-group-of-institutions-1640378?lb=i1Fw6PAU"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-10 py-3 text-base font-semibold text-black bg-[#4DBC1B] rounded-full hover:bg-[#5fd620] hover:shadow-[0_0_30px_rgba(77,188,27,0.5)] transition-all duration-300 hover:scale-105"
-                    >
-                        Register for AI ARENA
-                    </a>
-
                     {/* Secondary buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 items-center">
                         <button
