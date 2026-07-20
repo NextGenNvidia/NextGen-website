@@ -100,7 +100,7 @@ export default function Contact() {
             icon: Linkedin,
             label: "LinkedIn",
             value: "NextGen SuperComputing",
-            href: "https://linkedin.com",
+            href: "https://www.linkedin.com/company/nextgen-supercomputing/",
         },
         {
             icon: Github,

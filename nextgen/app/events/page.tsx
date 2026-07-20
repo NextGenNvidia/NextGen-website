@@ -10,17 +10,7 @@ import { ChevronUp } from "lucide-react";
 import { useScrollContext } from "../components/SmoothScrollProvider";
 
 const upcomingEvents = [
-    
-    {
-        title: "Tech Talk: Future of Quantum Computing",
-        date: "April 20, 2026",
-        time: "4:00 PM - 6:00 PM",
-        location: "Seminar Hall B",
-        description: "An expert session discussing the breakthroughs and future potential of quantum processors.",
-        image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=600",
-        status: "upcoming" as const,
-        registrationLink: "#"
-    }
+    ,
 ];
 
 const pastEvents = [
@@ -89,15 +79,26 @@ export default function EventsPage() {
                     <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[#4DBC1B]/50"></div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {upcomingEvents.map((event, index) => (
-                        <EventCard
-                            key={index}
-                            {...event}
-                            delay={index * 0.1}
-                        />
-                    ))}
-                </div>
+                {upcomingEvents.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {upcomingEvents.map((event, index) => (
+                            <EventCard
+                                key={index}
+                                {...event}
+                                delay={index * 0.1}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-center py-12 px-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm max-w-md mx-auto"
+                    >
+                        <p className="text-gray-300 text-lg font-medium">No upcoming events right now</p>
+                        <p className="text-gray-500 text-sm mt-1">Check back soon for new announcements and workshops!</p>
+                    </motion.div>
+                )}
             </section>
 
             {/* Past Events */}
