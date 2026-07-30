@@ -7,23 +7,23 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
 [![GSAP](https://img.shields.io/badge/GSAP-3.14.2-88CE02?style=for-the-badge&logo=greensock)](https://greensock.com/gsap/)
 
-Welcome to the official repository of **NextGen Supercomputing**, an interactive high-performance web platform designed to showcase supercomputing initiatives, AI research, workshops, hackathons, and community team members.
+Welcome to the official repository of **NextGen Supercomputing**, an interactive web platform showcasing supercomputing initiatives, AI research, workshops, hackathons, and the NextGen community.
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
-- **🚀 Ultra-Modern Tech Stack**: Built with Next.js 16 App Router, React 19, and TypeScript.
-- **🎨 Immersive 3D Visualizations**: Powered by `@react-three/fiber`, `@react-three/drei`, and custom Three.js canvas shaders (3D Sphere animations, interactive particle fields).
-- **✨ Dynamic Animations & Micro-Interactions**: Integrated with **GSAP**, **Framer Motion**, custom smooth typewriter text, interactive dot grid, scroll reveals, and custom glowing cursors.
-- **🌊 Ultra-Smooth Inertial Scrolling**: Implemented using `@studio-freight/lenis` (Lenis Smooth Scroll Provider).
-- **✉️ Full-Featured Contact System**: Serverless API route backed by `nodemailer` for email delivery with automated confirmations and team notifications.
-- **📅 Events & Workshops Portal**: Filterable showcase of upcoming and past events (including hackathons like *AI Arena: Gotham Edition*).
-- **👥 Interactive Team & Initiatives Sections**: Highlights key research, cluster projects (e.g., *Riva Supercomputer*), and team achievements.
+- **Modern Tech Stack**: Built with Next.js 16 App Router, React 19, and TypeScript.
+- **3D Visualizations**: Powered by `@react-three/fiber`, `@react-three/drei`, and custom Three.js scenes including interactive particle effects and 3D animations.
+- **Animations & Interactions**: Uses GSAP, Framer Motion, smooth typewriter effects, interactive dot grids, scroll animations, and a custom cursor.
+- **Smooth Scrolling**: Integrated with `@studio-freight/lenis` for a smooth scrolling experience.
+- **Contact System**: Serverless contact API built with `nodemailer` for email delivery, confirmations, and team notifications.
+- **Events & Workshops**: Dedicated section for upcoming and past events, workshops, and hackathons.
+- **Team & Initiatives**: Showcases research projects, initiatives such as the Riva Supercomputer, and community members.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Category | Technologies |
 | :--- | :--- |
@@ -31,13 +31,13 @@ Welcome to the official repository of **NextGen Supercomputing**, an interactive
 | **Language** | TypeScript |
 | **3D & Graphics** | Three.js, `@react-three/fiber`, `@react-three/drei`, `maath` |
 | **Animations** | GSAP, `@gsap/react`, Framer Motion |
-| **Styling** | Tailwind CSS v4, PostCSS, Lucide React icons |
+| **Styling** | Tailwind CSS v4, PostCSS, Lucide React |
 | **Scroll Engine** | Lenis (`lenis`) |
 | **Email Service** | Nodemailer |
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 NextGen-website/
@@ -66,83 +66,93 @@ NextGen-website/
     │   │   ├── ScrollReveal.tsx
     │   │   ├── SmoothScrollProvider.tsx
     │   │   └── SphereAnimation.tsx
-    │   ├── contact/        # Contact Us page
-    │   ├── events/         # Events showcase page
-    │   ├── team/           # Team members page
-    │   ├── globals.css     # Global styles & Tailwind v4 imports
-    │   ├── layout.tsx      # Main application layout
-    │   └── page.tsx        # Homepage
-    ├── public/             # Static assets (images, logos, icons)
-    ├── CONTACT_SETUP.md    # Detailed guide for contact form & email configuration
-    ├── next.config.ts      # Next.js configuration
-    ├── package.json        # Project dependencies & scripts
-    └── tsconfig.json       # TypeScript configuration
+    │   ├── contact/
+    │   ├── events/
+    │   ├── team/
+    │   ├── globals.css
+    │   ├── layout.tsx
+    │   └── page.tsx
+    ├── public/
+    ├── CONTACT_SETUP.md
+    ├── next.config.ts
+    ├── package.json
+    └── tsconfig.json
 ```
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18.17.0 or higher recommended)
+- [Node.js](https://nodejs.org/) (v18.17.0 or later)
 - `npm` (v9+), `yarn`, `pnpm`, or `bun`
 
-### Installation & Setup
+### Installation
 
-1. **Clone the repository** (if not already local):
-   ```bash
-   git clone https://github.com/NextGenNvidia/NextGen-website.git
-   cd NextGen-website/nextgen
-   ```
+1. Clone the repository:
 
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+```bash
+git clone https://github.com/NextGenNvidia/NextGen-website.git
+cd NextGen-website/nextgen
+```
 
-3. **Configure Environment Variables**:
-   Create a `.env.local` file in the `nextgen` directory:
-   ```bash
-   cp .env.local.example .env.local
-   ```
-   Add your SMTP credentials for the contact form:
-   ```env
-   EMAIL_USER=your-email@gmail.com
-   EMAIL_PASSWORD=your-app-password
-   CONTACT_EMAIL=contact@nextgensupercomputing.org
-   ```
-   *(For detailed instructions regarding Gmail App Passwords or custom SMTP providers, refer to [`CONTACT_SETUP.md`](file:///c:/Users/vaish/Desktop/NextGen-website/nextgen/CONTACT_SETUP.md)).*
+2. Install dependencies:
 
-4. **Start the Development Server**:
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
+```bash
+npm install
+```
 
----
+3. Configure environment variables:
 
-## 📜 Available Scripts
+Create a `.env.local` file inside the `nextgen` directory.
 
-Inside the `nextgen` directory, you can run the following scripts:
+```bash
+cp .env.local.example .env.local
+```
 
-- **`npm run dev`**: Launches Next.js dev server with Turbopack.
-- **`npm run dev:webpack`**: Starts dev server forced with Webpack.
-- **`npm run build`**: Compiles and builds the production bundle.
-- **`npm run start`**: Runs the built production server locally.
-- **`npm run lint`**: Runs ESLint to check code quality and formatting.
+Add your SMTP credentials:
+
+```env
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password
+CONTACT_EMAIL=contact@nextgensupercomputing.org
+```
+
+For detailed SMTP setup instructions, refer to `CONTACT_SETUP.md`.
+
+4. Start the development server:
+
+```bash
+npm run dev
+```
+
+Open http://localhost:3000 in your browser.
 
 ---
 
-## 📬 Contact & Community
+## Available Scripts
 
-For inquiries, collaborations, or joining the NextGen Supercomputing community:
-- **Email**: [dgxcoe@kiet.edu](mailto:dgxcoe@kiet.edu)
-- **Website**: [NextGen Supercomputing](https://www.nextgen-supercomputing.in/)
-- **Linkedin**: [NextGen Supercomputing](https://www.linkedin.com/company/nextgen-supercomputing/)
+Inside the `nextgen` directory:
+
+- `npm run dev` – Starts the development server with Turbopack.
+- `npm run dev:webpack` – Starts the development server using Webpack.
+- `npm run build` – Builds the application for production.
+- `npm run start` – Starts the production server locally.
+- `npm run lint` – Runs ESLint.
 
 ---
 
-## 📄 License
+## Contact & Community
 
-This project is maintained by **NextGen Supercomputing Team**. All rights reserved.
+For inquiries, collaborations, or community participation:
+
+- **Email:** dgxcoe@kiet.edu
+- **Website:** https://www.nextgen-supercomputing.in/
+- **LinkedIn:** https://www.linkedin.com/company/nextgen-supercomputing/
+
+---
+
+## License
+
+This project is maintained by the **NextGen Supercomputing Team**. All rights reserved.
