@@ -9,7 +9,18 @@ import { useState, useEffect } from "react";
 import { ChevronUp } from "lucide-react";
 import { useScrollContext } from "../components/SmoothScrollProvider";
 
-const upcomingEvents = [
+interface EventItem {
+    title: string;
+    date: string;
+    time: string;
+    location: string;
+    description: string;
+    image: string;
+    status: "upcoming" | "past";
+    registrationLink?: string;
+}
+
+const upcomingEvents: EventItem[] = [
     
 ];
 
