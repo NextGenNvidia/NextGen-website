@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LoadingScreen from "./LoadingScreen";
 import Navbar from "./Navbar";
 import Hero from "./Hero";
@@ -10,11 +10,29 @@ export default function HomeClient({
 }: {
     children: React.ReactNode;
 }) {
-    // Skip loader if we've already shown it this session
-    const [loading, setLoading] = useState(() => {
-        if (typeof window === "undefined") return false;
-        return !sessionStorage.getItem("nextgen_loader_done");
-    });
+    // Start with false on both server and client to avoid hydration mismatch
+    const [loading, setLoading] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        // After mount, check sessionStorage to decide whether to show loader
+        const alreadyDone = sessionStorage.getItem("nextgen_loader_done");
+        if (!alreadyDone) {
+            setLoading(true);
+        }
+        setMounted(true);
+    }, []);
+
+    // Before mount, render the main content (matches SSR output exactly)
+    if (!mounted) {
+        return (
+            <main className="flex min-h-screen flex-col">
+                <Navbar ready={true} />
+                <Hero ready={true} />
+                {children}
+            </main>
+        );
+    }
 
     return (
         <>
