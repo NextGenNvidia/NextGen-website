@@ -268,13 +268,15 @@ function DesktopLoader({ onComplete }: { onComplete: () => void }) {
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function LoadingScreen({ onComplete }: { onComplete: () => void }) {
-    const [isMobile, setIsMobile] = useState<boolean | null>(null);
+    const [isMobile, setIsMobile] = useState<boolean>(false);
+    const [mounted, setMounted] = useState<boolean>(false);
 
     useEffect(() => {
         setIsMobile(window.innerWidth < 768);
+        setMounted(true);
     }, []);
 
-    if (isMobile === null) return <div className="fixed inset-0 z-[100] bg-black" />;
+    if (!mounted) return <div className="fixed inset-0 z-[100] bg-black" />;
 
     return isMobile
         ? <MobileLoader onComplete={onComplete} />
