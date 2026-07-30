@@ -1,158 +1,332 @@
 "use client";
 
-import { useRef } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, MapPin, ChevronLeft, ChevronRight, Sparkles, ArrowRight } from "lucide-react";
 
-const events = [
-    {
-        title: "AI Summit 2024",
-        subtitle: "Annual Conference",
-        image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=600",
-        desc: "Join industry leaders and researchers for a deep dive into the latest advancements in Artificial Intelligence.",
-    },
-    {
-        title: "HPC Workshop",
-        subtitle: "Hands-on Training",
-        image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=600",
-        desc: "Master the art of High Performance Computing with our intensive weekend workshop.",
-    },
-    {
-        title: "Hackathon",
-        subtitle: "24-Hour Build",
-        image: "https://images.unsplash.com/photo-1504384308090-c54be3852f33?auto=format&fit=crop&q=80&w=600",
-        desc: "Collaborate, innovate, and build amazing projects in our annual 24-hour coding marathon.",
-    },
-    {
-        title: "Research Symposium",
-        subtitle: "Paper Presentations",
-        image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=600",
-        desc: "Students and faculty present groundbreaking research papers on cutting-edge topics.",
-    },
-    {
-        title: "GPU Programming",
-        subtitle: "CUDA Workshop",
-        image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80&w=600",
-        desc: "Learn to harness the power of GPUs for massive parallel processing tasks.",
-    },
-    {
-        title: "Cloud Summit",
-        subtitle: "Infrastructure Talk",
-        image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=600",
-        desc: "Explore the future of cloud infrastructure and scalable solutions.",
-    },
+interface EventItem {
+  id: string;
+  title: string;
+  category: string;
+  date: string;
+  location: string;
+  description: string;
+  image: string;
+}
+
+const events: EventItem[] = [
+  {
+    id: "ai-summit",
+    title: "AI Summit 2024",
+    category: "ANNUAL CONFERENCE",
+    date: "Jan 20, 2024",
+    location: "Bangalore",
+    description: "Join industry leaders and researchers for a deep dive into the latest advancements in Artificial Intelligence.",
+    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=600",
+  },
+  {
+    id: "hpc-workshop",
+    title: "HPC Workshop",
+    category: "HANDS-ON TRAINING",
+    date: "Mar 15, 2024",
+    location: "New Delhi",
+    description: "Master the art of High Performance Computing with our intensive weekend workshop.",
+    image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=600",
+  },
+  {
+    id: "hackathon",
+    title: "Hackathon 2024",
+    category: "24-HOUR BUILD",
+    date: "May 10, 2024",
+    location: "Online",
+    description: "Collaborate, innovate, and build amazing projects in our annual 24-hour coding marathon.",
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    id: "research-symposium",
+    title: "Research Symposium",
+    category: "PAPER PRESENTATIONS",
+    date: "Jul 22, 2024",
+    location: "New Delhi",
+    description: "Students and faculty present groundbreaking research papers on cutting-edge topics.",
+    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=600",
+  },
+  {
+    id: "gpu-programming",
+    title: "GPU Programming",
+    category: "CUDA WORKSHOP",
+    date: "Sep 05, 2024",
+    location: "Online",
+    description: "Learn to harness the power of GPUs for massive parallel processing tasks.",
+    image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80&w=600",
+  },
+  {
+    id: "cloud-summit",
+    title: "Cloud Summit",
+    category: "INFRASTRUCTURE TALK",
+    date: "Nov 12, 2024",
+    location: "Hybrid",
+    description: "Explore the future of cloud infrastructure and scalable supercomputing solutions.",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=600",
+  },
 ];
 
-export default function EventsSection() {
-    const scrollRef = useRef<HTMLDivElement>(null);
+// Highly optimized CoverFlow Card - Zero backdrop-filter or heavy CSS filters
+const CoverFlowCard = memo(function CoverFlowCard({
+  event,
+  index,
+  activeIndex,
+  onSelect,
+}: {
+  event: EventItem;
+  index: number;
+  activeIndex: number;
+  onSelect: (idx: number) => void;
+}) {
+  const offset = index - activeIndex;
+  const absOffset = Math.abs(offset);
+  const isActive = offset === 0;
 
-    const scroll = (dir: "left" | "right") => {
-        const el = scrollRef.current;
-        if (!el) return;
-        const cardW = el.firstElementChild?.clientWidth ?? 320;
-        el.scrollBy({ left: dir === "left" ? -(cardW + 24) : cardW + 24, behavior: "smooth" });
-    };
+  // Render only visible window (-2 to 2)
+  if (absOffset > 2) return null;
 
-    return (
-        <section className="relative bg-black py-16 md:py-24 overflow-hidden">
-            {/* Heading */}
-            <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7 }}
-                viewport={{ once: true }}
-                className="text-center mb-10 px-4"
+  const cardWidth = 300;
+  const spacing = 180;
+
+  const translateX = offset * spacing;
+  const translateZ = isActive ? 50 : -absOffset * 140;
+  let rotateY = 0;
+  let opacity = 1;
+  let scale = 1;
+
+  if (offset < 0) {
+    rotateY = 38;
+    opacity = 1 - absOffset * 0.3;
+    scale = 0.86;
+  } else if (offset > 0) {
+    rotateY = -38;
+    opacity = 1 - absOffset * 0.3;
+    scale = 0.86;
+  } else {
+    scale = 1.1;
+    opacity = 1;
+  }
+
+  const zIndex = 100 - absOffset * 10;
+
+  return (
+    <motion.div
+      onClick={() => onSelect(index)}
+      className="absolute top-0 left-1/2 cursor-pointer select-none"
+      style={{
+        width: `${cardWidth}px`,
+        marginLeft: `-${cardWidth / 2}px`,
+        zIndex,
+        willChange: "transform, opacity",
+      }}
+      animate={{
+        x: translateX,
+        z: translateZ,
+        rotateY: rotateY,
+        scale: scale,
+        opacity: opacity,
+      }}
+      transition={{
+        type: "spring",
+        stiffness: 200,
+        damping: 24,
+      }}
+    >
+      {/* Crisp High-Performance Card Container (No backdrop-blur for max FPS) */}
+      <div
+        className={`relative rounded-2xl overflow-hidden transition-colors duration-300 border ${
+          isActive
+            ? "bg-[#111111] border-[#4DBC1B] shadow-[0_0_35px_rgba(77,188,27,0.25)]"
+            : "bg-[#0a0a0a] border-white/10 hover:border-[#4DBC1B]/40"
+        }`}
+      >
+        {/* Image */}
+        <div className="relative h-44 w-full overflow-hidden bg-gray-900">
+          <img
+            src={event.image}
+            alt={event.title}
+            loading="lazy"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent" />
+
+          <div className="absolute top-3 left-3">
+            <span
+              className={`text-[9px] font-extrabold tracking-widest uppercase px-2.5 py-1 rounded-full border ${
+                isActive
+                  ? "text-[#4DBC1B] border-[#4DBC1B]/40 bg-black/80"
+                  : "text-gray-300 border-white/10 bg-black/70"
+              }`}
             >
-                <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4">
-                    <span className="text-white">LATEST EVENTS </span>
-                    <span className="text-[#4DBC1B] text-glow">CONDUCTED</span>
-                </h2>
-                <p className="text-gray-400 max-w-2xl mx-auto">
-                    Exploring the frontiers of technology through workshops, hackathons, and seminars.
-                </p>
-            </motion.div>
+              {event.category}
+            </span>
+          </div>
+        </div>
 
-            {/* Carousel + nav buttons */}
-            <div className="relative max-w-7xl mx-auto px-4 md:px-8">
-                {/* Left arrow */}
-                <button
-                    onClick={() => scroll("left")}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-black/70 border border-white/10 text-white hover:border-[#4DBC1B]/60 hover:text-[#4DBC1B] transition-all duration-200 -translate-x-1/2 hidden md:flex"
-                    aria-label="Previous"
-                >
-                    <ChevronLeft size={20} />
-                </button>
+        {/* Content */}
+        <div className="p-5 flex flex-col min-h-[180px]">
+          <h3
+            className={`text-xl font-bold tracking-tight mb-2 ${
+              isActive ? "text-white" : "text-gray-300"
+            }`}
+          >
+            {event.title}
+          </h3>
 
-                {/* Snap scroll track */}
-                <div
-                    ref={scrollRef}
-                    className="flex gap-6 overflow-x-auto pb-4"
-                    style={{
-                        scrollSnapType: "x mandatory",
-                        WebkitOverflowScrolling: "touch",
-                        scrollbarWidth: "none",
-                        msOverflowStyle: "none",
-                    }}
-                >
-                    {events.map((ev, i) => (
-                        <motion.div
-                            key={ev.title}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: i * 0.08 }}
-                            viewport={{ once: true }}
-                            className="group relative bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden hover:border-[#4DBC1B]/50 transition-colors duration-300 flex flex-col flex-shrink-0"
-                            style={{
-                                scrollSnapAlign: "start",
-                                width: "clamp(280px, 80vw, 340px)",
-                            }}
-                        >
-                            {/* Image */}
-                            <div className="relative h-48 w-full overflow-hidden">
-                                <div className="absolute inset-0 bg-gray-800 animate-pulse" />
-                                <img
-                                    src={ev.image}
-                                    alt={ev.title}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                                <div className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-gray-700 text-gray-300">
-                                    {ev.subtitle}
-                                </div>
-                            </div>
+          <div className="flex items-center gap-3 text-xs text-gray-400 mb-2.5">
+            <span className="flex items-center gap-1">
+              <Calendar className="w-3.5 h-3.5 text-[#4DBC1B]" />
+              {event.date}
+            </span>
+            <span className="flex items-center gap-1">
+              <MapPin className="w-3.5 h-3.5 text-[#4DBC1B]" />
+              {event.location}
+            </span>
+          </div>
 
-                            {/* Content */}
-                            <div className="p-6 flex flex-col flex-grow">
-                                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#4DBC1B] transition-colors">
-                                    {ev.title}
-                                </h3>
-                                <p className="text-gray-400 text-sm leading-relaxed line-clamp-3 mb-6">
-                                    {ev.desc}
-                                </p>
-                                <div className="mt-auto pt-4 border-t border-white/10">
-                                </div>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+          <p
+            className={`text-xs leading-relaxed flex-1 line-clamp-2 ${
+              isActive ? "text-gray-300" : "text-gray-500"
+            }`}
+          >
+            {event.description}
+          </p>
 
-                {/* Right arrow */}
-                <button
-                    onClick={() => scroll("right")}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-black/70 border border-white/10 text-white hover:border-[#4DBC1B]/60 hover:text-[#4DBC1B] transition-all duration-200 translate-x-1/2 hidden md:flex"
-                    aria-label="Next"
-                >
-                    <ChevronRight size={20} />
-                </button>
+          {isActive && (
+            <div className="mt-4 pt-3 border-t border-[#4DBC1B]/20 flex items-center justify-between">
+              <span className="text-[11px] font-bold text-[#4DBC1B] uppercase tracking-wider flex items-center gap-1">
+                <Sparkles className="w-3 h-3" />
+                Featured
+              </span>
+              <button className="px-3.5 py-1.5 rounded-full text-xs font-bold text-black bg-[#4DBC1B] hover:bg-[#5dd420] transition-colors flex items-center gap-1">
+                Details
+                <ArrowRight className="w-3 h-3" />
+              </button>
             </div>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+});
 
-            {/* Swipe hint — mobile only */}
-            <p className="text-center text-gray-600 text-xs mt-4 md:hidden tracking-widest uppercase">
-                ← swipe →
-            </p>
+export default function EventsSection() {
+  // Default centered event on page load: Research Symposium (index 3)
+  const [activeIndex, setActiveIndex] = useState<number>(3);
+  const totalEvents = events.length;
 
-            {/* Background glows */}
-            <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-[#4DBC1B]/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-            <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-[#4DBC1B]/5 rounded-full blur-[80px] translate-x-1/3 translate-y-1/3 pointer-events-none" />
-        </section>
-    );
+  const handleNext = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % totalEvents);
+  }, [totalEvents]);
+
+  const handlePrev = useCallback(() => {
+    setActiveIndex((prev) => (prev - 1 + totalEvents) % totalEvents);
+  }, [totalEvents]);
+
+  // Keyboard navigation only
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") handleNext();
+      if (e.key === "ArrowLeft") handlePrev();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleNext, handlePrev]);
+
+  return (
+    <section id="events" className="relative bg-black py-20 md:py-32 px-4 overflow-hidden select-none">
+      {/* Light background grid */}
+      <div
+        className="absolute inset-0 z-0 opacity-10 pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(rgba(77, 188, 27, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(77, 188, 27, 0.1) 1px, transparent 1px)`,
+          backgroundSize: "60px 60px",
+        }}
+      />
+
+      {/* Header */}
+      <div className="relative z-10 text-center mb-12 md:mb-16 max-w-4xl mx-auto px-4">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tight text-white mb-4"
+        >
+          LATEST EVENTS <span className="text-[#4DBC1B] text-glow">CONDUCTED</span>
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          viewport={{ once: true }}
+          className="text-gray-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light"
+        >
+          Exploring the frontiers of technology through workshops, hackathons, and seminars.
+        </motion.p>
+      </div>
+
+      {/* 3D Cover Flow Viewport */}
+      <div
+        className="relative z-10 max-w-6xl mx-auto h-[440px] flex items-center justify-center"
+        style={{
+          perspective: "1000px",
+        }}
+      >
+        <div className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>
+          {events.map((event, index) => (
+            <CoverFlowCard
+              key={event.id}
+              event={event}
+              index={index}
+              activeIndex={activeIndex}
+              onSelect={setActiveIndex}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="relative z-10 max-w-md mx-auto mt-6 flex flex-col items-center gap-3">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={handlePrev}
+            className="w-10 h-10 rounded-full border border-[#4DBC1B]/40 bg-black flex items-center justify-center text-[#4DBC1B] hover:bg-[#4DBC1B]/20 transition-colors"
+            aria-label="Previous event"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black border border-white/10">
+            {events.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveIndex(idx)}
+                className={`transition-all duration-200 rounded-full ${
+                  idx === activeIndex
+                    ? "w-6 h-2 bg-[#4DBC1B]"
+                    : "w-2 h-2 bg-white/20 hover:bg-white/50"
+                }`}
+                aria-label={`Go to event ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={handleNext}
+            className="w-10 h-10 rounded-full border border-[#4DBC1B]/40 bg-black flex items-center justify-center text-[#4DBC1B] hover:bg-[#4DBC1B]/20 transition-colors"
+            aria-label="Next event"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+    </section>
+  );
 }
