@@ -69,13 +69,13 @@ TypewriterText.displayName = "TypewriterText";
 
 // ─── Fade-up animation variants ──────────────────────────────────────────────
 const fadeUpVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 20 },
     visible: (i: number) => ({
         opacity: 1,
         y: 0,
         transition: {
-            duration: 0.7,
-            delay: 0.15 + i * 0.12,
+            duration: 0.6,
+            delay: 0.1 + i * 0.1,
             ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
         },
     }),
@@ -109,10 +109,12 @@ export default function Hero({ ready = true, skipAnimation = false }: { ready?: 
 
     return (
         <section className="relative flex items-center min-h-screen overflow-hidden">
+            {/* Fullscreen background particle grid */}
             <div className="absolute inset-0 z-0">
                 <MemoizedGrid startAnimation={showUI} />
             </div>
-            {/* Subtle ambient glow — centered behind hero */}
+
+            {/* Ambient background glow */}
             <motion.div
                 animate={{ opacity: [0.06, 0.12, 0.06], scale: [1, 1.08, 1] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -123,94 +125,149 @@ export default function Hero({ ready = true, skipAnimation = false }: { ready?: 
                 style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
                 className="relative z-10 w-full flex flex-col lg:flex-row items-center lg:items-center min-h-screen"
             >
-                {/* ─── LEFT: Text Content ────────────────────────────────── */}
+                {/* ─── LEFT: HPC Mission Control Interface Panel ────────────────────────────────── */}
                 <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 sm:px-10 md:px-16 lg:px-20 pt-28 sm:pt-32 lg:pt-0 pb-8 lg:pb-0">
-                    <div className="max-w-[560px]">
-                        {/* Main heading */}
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-3 leading-[1.1] min-h-[1.2em]">
-                            <TypewriterText
-                                text="From Code to Supercomputers"
-                                speed={50}
-                                startNow={startLine1}
-                                onDone={handleLine1Done}
-                            />
-                        </h1>
+                    
+                    {/* Control Panel Framed Box with Corner Bracket Accents */}
+                    <div className="relative p-6 sm:p-8 rounded-xl border border-[#4DBC1B]/15 bg-black/40 backdrop-blur-md max-w-[560px]">
+                        
+                        {/* Corner Bracket Accents (┌ ┐ └ ┘) */}
+                        <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#4DBC1B]/60 rounded-tl-sm pointer-events-none" />
+                        <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#4DBC1B]/60 rounded-tr-sm pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#4DBC1B]/60 rounded-bl-sm pointer-events-none" />
+                        <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#4DBC1B]/60 rounded-br-sm pointer-events-none" />
 
-                        {/* Subtitle */}
-                        <h2
-                            className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-[#4DBC1B] mb-6 md:mb-8 leading-[1.15] min-h-[1.2em]"
-                            style={{ textShadow: "0 0 40px rgba(77, 188, 27, 0.3)" }}
-                        >
-                            <TypewriterText
-                                text="Your Journey Starts Here"
-                                speed={50}
-                                startNow={line1Done}
-                                onDone={handleLine2Done}
-                            />
-                        </h2>
+                        {/* Faint Background Grid Details */}
+                        <div
+                            className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                            style={{
+                                backgroundImage: `linear-gradient(rgba(77,188,27,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(77,188,27,0.4) 1px, transparent 1px)`,
+                                backgroundSize: "20px 20px",
+                            }}
+                        />
 
-                        {/* Description */}
-                        <motion.p
+                        {/* 1. TOP STATUS BAR */}
+                        <div className="flex items-center justify-between text-[10px] font-mono tracking-[0.25em] text-[#4DBC1B]/80 uppercase pb-4 mb-4 border-b border-[#4DBC1B]/20">
+                            <span className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#4DBC1B] animate-pulse" />
+                                RESEARCH CLUSTER ACTIVE
+                            </span>
+                            <span className="text-gray-500 hidden sm:inline">SYS_ID: HPC-NODE-01</span>
+                        </div>
+
+                        {/* 2. MAIN TITLE & SUBTITLE */}
+                        <div className="mb-5">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-2 leading-[1.1] min-h-[1.2em]">
+                                <TypewriterText
+                                    text="From Code to Supercomputers"
+                                    speed={50}
+                                    startNow={startLine1}
+                                    onDone={handleLine1Done}
+                                />
+                            </h1>
+
+                            <h2
+                                className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-[#4DBC1B] leading-[1.15] min-h-[1.2em]"
+                                style={{ textShadow: "0 0 30px rgba(77, 188, 27, 0.35)" }}
+                            >
+                                <TypewriterText
+                                    text="Your Journey Starts Here"
+                                    speed={50}
+                                    startNow={line1Done}
+                                    onDone={handleLine2Done}
+                                />
+                            </h2>
+                        </div>
+
+                        {/* Thin Divider */}
+                        <div className="w-full h-[1px] bg-gradient-to-r from-[#4DBC1B]/30 via-[#4DBC1B]/15 to-transparent mb-5" />
+
+                        {/* 3. DESCRIPTION */}
+                        <motion.div
                             variants={fadeUpVariants}
                             initial="hidden"
                             animate={showUI ? "visible" : "hidden"}
                             custom={0}
-                            className="text-sm sm:text-base text-gray-400 leading-relaxed mb-8 md:mb-10 max-w-[480px]"
+                            className="mb-5"
                         >
-                            Building next-generation high-performance computing infrastructure.
-                            From GPU clusters to distributed AI systems — we push the boundaries
-                            of what&apos;s possible.
-                        </motion.p>
+                            <p className="text-xs sm:text-sm text-gray-300 leading-relaxed max-w-[460px] font-mono opacity-90">
+                                Building next-generation high-performance computing infrastructure.
+                                From GPU clusters to distributed AI systems — we push the boundaries
+                                of what&apos;s possible.
+                            </p>
+                        </motion.div>
 
-                        {/* Buttons */}
+                        {/* Thin Divider */}
+                        <div className="w-full h-[1px] bg-gradient-to-r from-[#4DBC1B]/30 via-[#4DBC1B]/15 to-transparent mb-5" />
+
+                        {/* 4. PRIMARY ACTIONS AREA */}
                         <motion.div
                             variants={fadeUpVariants}
                             initial="hidden"
                             animate={showUI ? "visible" : "hidden"}
                             custom={1}
-                            className="flex flex-col sm:flex-row gap-4"
+                            className="mb-6"
                         >
-                            <button
-                                onClick={() => scrollTo("#riva", { offset: -80 })}
-                                className="px-8 py-3 text-base font-medium text-black bg-[#4DBC1B] rounded-full hover:bg-[#5dd420] hover:shadow-[0_0_30px_rgba(77,188,27,0.4)] transition-all duration-300 hover:scale-105"
-                            >
-                                Explore Riva
-                            </button>
-                            <button
-                                onClick={() => scrollTo("#projects", { offset: -80 })}
-                                className="px-8 py-3 text-base font-medium text-[#4DBC1B] border border-[#4DBC1B]/60 rounded-full hover:bg-[#4DBC1B]/10 hover:border-[#4DBC1B] hover:shadow-[0_0_25px_rgba(77,188,27,0.3)] transition-all duration-300 hover:scale-105"
-                            >
-                                Other Projects
-                            </button>
+                            <span className="block text-[10px] font-mono font-bold tracking-[0.2em] text-[#4DBC1B]/70 uppercase mb-3">
+                                // COMMAND ACTIONS
+                            </span>
+
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <button
+                                    onClick={() => scrollTo("#riva", { offset: -80 })}
+                                    className="px-7 py-2.5 text-xs sm:text-sm font-bold text-black bg-[#4DBC1B] rounded-md hover:bg-[#5dd420] hover:shadow-[0_0_25px_rgba(77,188,27,0.4)] transition-all duration-300 hover:scale-[1.02] tracking-wider uppercase"
+                                >
+                                    Explore Riva
+                                </button>
+                                <button
+                                    onClick={() => scrollTo("#projects", { offset: -80 })}
+                                    className="px-7 py-2.5 text-xs sm:text-sm font-bold text-[#4DBC1B] border border-[#4DBC1B]/60 rounded-md hover:bg-[#4DBC1B]/10 hover:border-[#4DBC1B] hover:shadow-[0_0_20px_rgba(77,188,27,0.25)] transition-all duration-300 hover:scale-[1.02] tracking-wider uppercase"
+                                >
+                                    Other Projects
+                                </button>
+                            </div>
                         </motion.div>
 
-                        {/* Stats row */}
+                        {/* Thin Divider */}
+                        <div className="w-full h-[1px] bg-gradient-to-r from-[#4DBC1B]/30 via-[#4DBC1B]/15 to-transparent mb-5" />
+
+                        {/* 5. SYSTEM METRICS PANELS */}
                         <motion.div
                             variants={fadeUpVariants}
                             initial="hidden"
                             animate={showUI ? "visible" : "hidden"}
                             custom={2}
-                            className="flex gap-8 mt-10 md:mt-14"
                         >
-                            {[
-                                { value: "50+", label: "GPU Nodes" },
-                                { value: "10+", label: "Projects" },
-                                { value: "99.9%", label: "Uptime" },
-                            ].map((stat) => (
-                                <div key={stat.label} className="flex flex-col">
-                                    <span className="text-xl sm:text-2xl font-bold text-white">
-                                        {stat.value}
-                                    </span>
-                                    <span className="text-xs text-gray-500 uppercase tracking-wider mt-1">
-                                        {stat.label}
-                                    </span>
-                                </div>
-                            ))}
+                            <span className="block text-[10px] font-mono font-bold tracking-[0.2em] text-[#4DBC1B]/70 uppercase mb-3">
+                                // CLUSTER METRICS
+                            </span>
+
+                            <div className="grid grid-cols-3 gap-3">
+                                {[
+                                    { value: "50+", label: "GPU NODES" },
+                                    { value: "10+", label: "PROJECTS" },
+                                    { value: "99.9%", label: "UPTIME" },
+                                ].map((stat) => (
+                                    <div
+                                        key={stat.label}
+                                        className="flex flex-col p-2.5 rounded border border-[#4DBC1B]/20 bg-black/60 hover:border-[#4DBC1B]/50 transition-colors"
+                                    >
+                                        <span className="text-[9px] font-mono text-gray-400 tracking-wider uppercase">
+                                            {stat.label}
+                                        </span>
+                                        <span className="text-base sm:text-lg font-black text-white font-mono mt-0.5">
+                                            {stat.value}
+                                        </span>
+                                        <div className="w-full h-[2px] bg-[#4DBC1B]/40 mt-1.5 rounded-full" />
+                                    </div>
+                                ))}
+                            </div>
                         </motion.div>
+
                     </div>
                 </div>
 
-                {/* ─── RIGHT: Three.js Scene ────────────────────────────── */}
+                {/* ─── RIGHT: Three.js Scene (UNTOUCHED) ────────────────────────────── */}
                 <motion.div
                     variants={fadeUpVariants}
                     initial="hidden"
