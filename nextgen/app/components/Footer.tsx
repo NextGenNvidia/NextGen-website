@@ -1,65 +1,25 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
-
-const quickLinks = [
-    { label: "Quick Links", href: "#" },
-    { label: "Live", href: "#" },
-    { label: "Resources", href: "#" },
-    { label: "Take Notes", href: "#" },
-];
 
 export default function Footer() {
     return (
         <footer className="relative bg-black pt-24 md:pt-32 pb-8 px-4 md:px-8 overflow-hidden">
             {/* CTA Area */}
-            <div className="max-w-6xl mx-auto mb-24 md:mb-32">
-                <div className="flex flex-col md:flex-row items-start justify-between gap-12">
-                    {/* Left: Big CTA text */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -40 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.7 }}
-                        viewport={{ once: true }}
-                        className="flex-1"
-                    >
-                        <h2 className="text-3xl md:text-5xl font-black leading-tight">
-                            <span className="text-white">Experience power</span>
-                            <br />
-                            <span className="text-white">like </span>
-                            <span className="text-[#4DBC1B] text-glow">NEVER BEFORE</span>
-                        </h2>
-                    </motion.div>
-
-                    {/* Right: Quick links */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 40 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.7, delay: 0.2 }}
-                        viewport={{ once: true }}
-                        className="flex-shrink-0"
-                    >
-                        <ul className="space-y-3">
-                            {quickLinks.map((link, i) => (
-                                <motion.li
-                                    key={link.label}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.4, delay: 0.3 + i * 0.08 }}
-                                    viewport={{ once: true }}
-                                >
-                                    <Link
-                                        href={link.href}
-                                        className="text-gray-400 hover:text-[#4DBC1B] transition-colors text-sm nav-link-animated magnetic-item"
-                                    >
-                                        {link.label}
-                                    </Link>
-                                </motion.li>
-                            ))}
-                        </ul>
-                    </motion.div>
-                </div>
+            <div className="max-w-6xl mx-auto mb-20 md:mb-28 text-center md:text-left">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7 }}
+                    viewport={{ once: true }}
+                >
+                    <h2 className="text-3xl md:text-5xl font-black leading-tight">
+                        <span className="text-white">Experience power</span>
+                        <br />
+                        <span className="text-white">like </span>
+                        <span className="text-[#4DBC1B] text-glow">NEVER BEFORE</span>
+                    </h2>
+                </motion.div>
             </div>
 
             {/* Large Brand Name */}
