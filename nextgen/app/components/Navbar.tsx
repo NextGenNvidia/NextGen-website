@@ -11,6 +11,7 @@ const navLinks = [
     { name: "Home", href: "/home", id: "home" },
     { name: "Team", href: "/team" },
     { name: "Events", href: "/events" },
+    { name: "Achievements", href: "/achievements" },
 ];
 
 export default function Navbar({ ready: parentReady = true }: { ready?: boolean }) {

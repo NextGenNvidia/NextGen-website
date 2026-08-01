@@ -15,7 +15,12 @@ export default function CustomCursor() {
   const ring = useRef({ x: -100, y: -100, scaleX: 1, scaleY: 1, scale: 1 });
   const magnet = useRef({ x: 0, y: 0 });
 
-  const hoverState = useRef<"default" | "button" | "card" | "link" | "image">("default");
+  // Visibility and opacity refs
+  const isVisible = useRef(false);
+  const currentOpacity = useRef(0);
+  const hasMovedOnce = useRef(false);
+
+  const hoverState = useRef<"default" | "button" | "card" | "link" | "image" | "text">("default");
   const isMouseDown = useRef(false);
   const isScrolling = useRef(false);
   const lastScrollY = useRef(0);
@@ -50,54 +55,104 @@ export default function CustomCursor() {
     handleResize();
     window.addEventListener("resize", handleResize);
 
+    const snapToPosition = (x: number, y: number) => {
+      target.current.x = x;
+      target.current.y = y;
+      mouse.current.x = x;
+      mouse.current.y = y;
+      dot.current.x = x;
+      dot.current.y = y;
+      ring.current.x = x;
+      ring.current.y = y;
+    };
+
     // Mouse Move Event
     const onMouseMove = (e: MouseEvent) => {
-      target.current.x = e.clientX;
-      target.current.y = e.clientY;
+      if (!hasMovedOnce.current || !isVisible.current) {
+        snapToPosition(e.clientX, e.clientY);
+        hasMovedOnce.current = true;
+        isVisible.current = true;
+      } else {
+        target.current.x = e.clientX;
+        target.current.y = e.clientY;
+      }
 
       // Check hovered elements for interactive states & magnetic pull
       const targetEl = e.target as HTMLElement | null;
       if (targetEl) {
-        const buttonEl = targetEl.closest("button, .btn, a.rounded-full, [role='button']");
-        const cardEl = targetEl.closest(".rounded-2xl, .rounded-xl, [class*='card']");
-        const linkEl = targetEl.closest("a, nav a, .nav-link-animated");
-        const imgEl = targetEl.closest("img, canvas, svg");
+        const textInputEl = targetEl.closest("input, textarea, select, [contenteditable='true']");
+        const buttonEl = targetEl.closest("button, .btn, a.rounded-full, [role='button'], .btn-glow");
+        const linkEl = targetEl.closest("a, nav a, .nav-link-animated, .cursor-pointer");
+        const cardEl = targetEl.closest("[data-cursor='card'], .interactive-card");
+        const imgEl = targetEl.closest("img, canvas.interactive, [data-cursor='image']");
 
-        if (buttonEl) {
-          hoverState.current = "button";
-          // Magnetic attraction calculation (max 10px)
-          const rect = buttonEl.getBoundingClientRect();
-          const btnCenterX = rect.left + rect.width / 2;
-          const btnCenterY = rect.top + rect.height / 2;
-          const distX = (btnCenterX - e.clientX) * 0.25;
-          const distY = (btnCenterY - e.clientY) * 0.25;
-          magnet.current.x = Math.max(-10, Math.min(10, distX));
-          magnet.current.y = Math.max(-10, Math.min(10, distY));
-        } else if (linkEl) {
-          hoverState.current = "link";
+        if (textInputEl) {
+          hoverState.current = "text";
           magnet.current = { x: 0, y: 0 };
-        } else if (cardEl) {
-          hoverState.current = "card";
-          magnet.current = { x: 0, y: 0 };
-        } else if (imgEl) {
-          hoverState.current = "image";
-          magnet.current = { x: 0, y: 0 };
+          document.body.classList.add("show-native-cursor");
         } else {
-          hoverState.current = "default";
-          magnet.current = { x: 0, y: 0 };
+          document.body.classList.remove("show-native-cursor");
+
+          if (buttonEl) {
+            hoverState.current = "button";
+            // Magnetic attraction only for small buttons (<240px wide, <90px tall)
+            const rect = buttonEl.getBoundingClientRect();
+            if (rect.width < 240 && rect.height < 90) {
+              const btnCenterX = rect.left + rect.width / 2;
+              const btnCenterY = rect.top + rect.height / 2;
+              const distX = (btnCenterX - e.clientX) * 0.2;
+              const distY = (btnCenterY - e.clientY) * 0.2;
+              magnet.current.x = Math.max(-8, Math.min(8, distX));
+              magnet.current.y = Math.max(-8, Math.min(8, distY));
+            } else {
+              magnet.current = { x: 0, y: 0 };
+            }
+          } else if (linkEl) {
+            hoverState.current = "link";
+            magnet.current = { x: 0, y: 0 };
+          } else if (cardEl) {
+            hoverState.current = "card";
+            magnet.current = { x: 0, y: 0 };
+          } else if (imgEl) {
+            hoverState.current = "image";
+            magnet.current = { x: 0, y: 0 };
+          } else {
+            hoverState.current = "default";
+            magnet.current = { x: 0, y: 0 };
+          }
         }
       }
 
       // Add energy trail particle (max 8 particles)
-      if (!prefersReducedMotion && Math.random() > 0.4) {
+      if (!prefersReducedMotion && Math.random() > 0.45 && hoverState.current !== "text") {
         particles.current.push({
           x: e.clientX,
           y: e.clientY,
-          alpha: 0.6,
+          alpha: 0.5,
           size: Math.random() * 2 + 1.5,
         });
         if (particles.current.length > 8) particles.current.shift();
       }
+    };
+
+    // Viewport enter / leave handlers
+    const onMouseLeave = () => {
+      isVisible.current = false;
+      document.body.classList.remove("show-native-cursor");
+    };
+
+    const onMouseEnter = (e: MouseEvent) => {
+      snapToPosition(e.clientX, e.clientY);
+      isVisible.current = true;
+    };
+
+    const onWindowBlur = () => {
+      isVisible.current = false;
+      document.body.classList.remove("show-native-cursor");
+    };
+
+    const onWindowFocus = () => {
+      isVisible.current = true;
     };
 
     // Scroll Detection (stretches outer ring)
@@ -121,7 +176,7 @@ export default function CustomCursor() {
     // Click Event (Energy Pulse)
     const onMouseDown = () => {
       isMouseDown.current = true;
-      if (pulseEl) {
+      if (pulseEl && hoverState.current !== "text") {
         pulseEl.style.transform = `translate3d(${target.current.x}px, ${target.current.y}px, 0) scale(0.2)`;
         pulseEl.style.opacity = "0.9";
         requestAnimationFrame(() => {
@@ -140,6 +195,10 @@ export default function CustomCursor() {
     };
 
     window.addEventListener("mousemove", onMouseMove, { passive: true });
+    document.addEventListener("mouseleave", onMouseLeave, { passive: true });
+    document.addEventListener("mouseenter", onMouseEnter, { passive: true });
+    window.addEventListener("blur", onWindowBlur);
+    window.addEventListener("focus", onWindowFocus);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("mousedown", onMouseDown, { passive: true });
     window.addEventListener("mouseup", onMouseUp, { passive: true });
@@ -173,32 +232,43 @@ export default function CustomCursor() {
       else if (hoverState.current === "card") targetScale = 1.25;
       else if (hoverState.current === "link") targetScale = 0.75;
       else if (hoverState.current === "image") targetScale = 1.35;
+      else if (hoverState.current === "text") targetScale = 0.2;
 
       if (isMouseDown.current) targetScale *= 0.85;
 
       ring.current.scale += (targetScale - ring.current.scale) * 0.2;
 
-      // Apply transforms
+      // Opacity calculation & smooth fade
+      const targetOpacity = isVisible.current ? (hoverState.current === "text" ? 0.2 : 1) : 0;
+      currentOpacity.current += (targetOpacity - currentOpacity.current) * 0.2;
+      const opacityStr = currentOpacity.current.toFixed(3);
+
+      // Apply transforms and opacity
       dotEl.style.transform = `translate3d(${dot.current.x}px, ${dot.current.y}px, 0) translate(-50%, -50%)`;
+      dotEl.style.opacity = opacityStr;
+
       ringEl.style.transform = `translate3d(${ring.current.x}px, ${ring.current.y}px, 0) translate(-50%, -50%) scale(${ring.current.scaleX * ring.current.scale}, ${ring.current.scaleY * ring.current.scale})`;
+      ringEl.style.opacity = opacityStr;
 
       // Render Trail Particles on Canvas
       if (ctx && canvas && !prefersReducedMotion) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let i = particles.current.length - 1; i >= 0; i--) {
-          const p = particles.current[i];
-          p.alpha -= 0.04;
-          p.size *= 0.95;
+        if (currentOpacity.current > 0.05 && hoverState.current !== "text") {
+          for (let i = particles.current.length - 1; i >= 0; i--) {
+            const p = particles.current[i];
+            p.alpha -= 0.04;
+            p.size *= 0.95;
 
-          if (p.alpha <= 0) {
-            particles.current.splice(i, 1);
-            continue;
+            if (p.alpha <= 0) {
+              particles.current.splice(i, 1);
+              continue;
+            }
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(77, 188, 27, ${p.alpha * currentOpacity.current})`;
+            ctx.fill();
           }
-
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(77, 188, 27, ${p.alpha})`;
-          ctx.fill();
         }
       }
 
@@ -211,9 +281,14 @@ export default function CustomCursor() {
       cancelAnimationFrame(animFrameId);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseleave", onMouseLeave);
+      document.removeEventListener("mouseenter", onMouseEnter);
+      window.removeEventListener("blur", onWindowBlur);
+      window.removeEventListener("focus", onWindowFocus);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("mouseup", onMouseUp);
+      document.body.classList.remove("show-native-cursor");
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
     };
   }, []);
@@ -233,7 +308,8 @@ export default function CustomCursor() {
         style={{
           width: 8,
           height: 8,
-          willChange: "transform",
+          opacity: 0,
+          willChange: "transform, opacity",
         }}
       />
 
@@ -245,7 +321,8 @@ export default function CustomCursor() {
           width: 26,
           height: 26,
           backgroundColor: "rgba(77, 188, 27, 0.04)",
-          willChange: "transform",
+          opacity: 0,
+          willChange: "transform, opacity",
         }}
       />
 
