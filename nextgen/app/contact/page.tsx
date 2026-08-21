@@ -175,7 +175,7 @@ const networkNodes: NetworkNode[] = [
     y: 20,
     size: 20,
     icon: MapPin,
-    value: "KIET University, Ghaziabad",
+    value: "KIET Deemed to be University, Ghaziabad",
     href: "#",
     description: "Visit our campus AI & Supercomputing Center of Excellence.",
     connections: ["linkedin"],
@@ -340,11 +340,10 @@ export default function ContactPage() {
                 >
                   {/* Outer Pulsing Aura */}
                   <div
-                    className={`relative rounded-full flex items-center justify-center transition-all duration-500 ${
-                      isActive
+                    className={`relative rounded-full flex items-center justify-center transition-all duration-500 ${isActive
                         ? "bg-[#4DBC1B] text-black shadow-[0_0_35px_#4DBC1B] border-2 border-[#4DBC1B]"
                         : "bg-black/80 text-[#4DBC1B] border border-[#4DBC1B]/40 hover:border-[#4DBC1B] hover:shadow-[0_0_20px_rgba(77,188,27,0.4)]"
-                    }`}
+                      }`}
                     style={{
                       width: `${node.size * 2}px`,
                       height: `${node.size * 2}px`,
@@ -360,9 +359,8 @@ export default function ContactPage() {
 
                   {/* Node Label underneath */}
                   <span
-                    className={`absolute left-1/2 -translate-x-1/2 mt-2 text-[10px] sm:text-xs font-bold tracking-wider whitespace-nowrap transition-colors duration-300 ${
-                      isActive ? "text-[#4DBC1B]" : "text-gray-400 group-hover:text-white"
-                    }`}
+                    className={`absolute left-1/2 -translate-x-1/2 mt-2 text-[10px] sm:text-xs font-bold tracking-wider whitespace-nowrap transition-colors duration-300 ${isActive ? "text-[#4DBC1B]" : "text-gray-400 group-hover:text-white"
+                      }`}
                   >
                     {node.label}
                   </span>
@@ -496,7 +494,7 @@ export default function ContactPage() {
                 { icon: Github, label: "GitHub", val: "nextgen-supercomputing", href: "https://github.com" },
                 { icon: MessageSquare, label: "Discord", val: "NextGen SuperComputing", href: "https://discord.com/channels/1532507711634145412/1532507712255037576" },
                 { icon: Linkedin, label: "LinkedIn", val: "NextGen SuperComputing", href: "https://www.linkedin.com/company/nextgen-supercomputing/" },
-                { icon: MapPin, label: "Location", val: "KIET University, Ghaziabad", href: "#" },
+                { icon: MapPin, label: "Location", val: "KIET Deemed to be University, Ghaziabad", href: "#" },
               ].map((item) => (
                 <a
                   key={item.label}

@@ -9,7 +9,9 @@ import { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useScrollContext } from "../components/SmoothScrollProvider";
 
-// Core Team
+// ==========================================
+// 1. CORE TEAM
+// ==========================================
 const coreTeam = [
     { name: "Shreya Jain", role: "President", bio: "Leading the vision and strategy for NextGen.", socials: { linkedin: "https://www.linkedin.com/in/shreya-jain-25564a334/", github: "https://github.com/Shreya7078" } },
     { name: "Samarth Shukla", role: "Vice President", bio: "Ensuring operational excellence and team cohesion.", socials: { linkedin: "https://www.linkedin.com/in/samarth-shukla-35b87a31b/", github: "https://github.com/Samx178" } },
@@ -23,7 +25,68 @@ const coreTeam = [
     { name: "Divyansh Verma", role: "Treasurer", bio: "Managing finances and sponsorships.", socials: { linkedin: "https://www.linkedin.com/in/divyansh-verma-045602274", github: "https://github.com/procoder-divyanshv" } },
 ];
 
-// PDF Data based Domain Teams (Exact Sequence)
+// ==========================================
+// 2. TECHNICAL DOMAIN SUBDOMAINS
+// ==========================================
+const aimlTeam = [
+    { name: "Vaishnavi Mishra", role: "AIML Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/vsnvi11/", github: "https://github.com/the11dev" } },
+    { name: "Ritik Chaudhary", role: "AIML Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ritik-chaudhary-2kk7/", github: "https://github.com/Ritik-AIML" } },
+    { name: "Aman Chaudhary", role: "AIML Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/aman-chaudhary-076216382/", github: "https://github.com/AmanAsh-207" } },
+    { name: "Khushi Tripathi", role: "AIML Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/khushi-tripathi-b6117636a/", github: "https://github.com/KhushiTripathi762" } },
+    { name: "Garima Singh", role: "AIML Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/garima-singh-715929382/", github: "https://github.com/garimasingh4448-code" } },
+    { name: "Akansh Dwivedi", role: "AIML Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/akansh-dwivedi-b79501355/", github: "https://github.com/Akanshdwi" } },
+];
+
+const dsaCpTeam = [
+    { name: "Sarthak Sharma", role: "DSA/CP Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/sarthaksharmakiet", github: "https://github.com/Sarthak752008" } },
+    { name: "Akshit Vats", role: "DSA/CP Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/akshitvats026", github: "https://github.com/Akshitvats026" } },
+    { name: "Kartikey Kumar", role: "DSA/CP Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/er-kk/", github: "https://github.com/kartikey-kk" } },
+    { name: "Divyansh Maheshwari", role: "DSA/CP Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/divyansh-maheshwari-6493b2381/", github: "https://github.com/divyanshmaheshwari617-cell" } },
+    { name: "Ayush Pathak", role: "DSA/CP Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ayush-pathak-0988b3381/", github: "https://github.com/ayushpathak-957" } },
+    { name: "Atul Kushwaha", role: "DSA/CP Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/atul-kushwaha-9b0290381/", github: "https://github.com/atulkushwaha0112-py" } },
+];
+
+const developmentTeam = [
+    { name: "Himadri Sharma", role: "Dev Member", bio: "3rd Year", socials: { linkedin: "https://www.linkedin.com/in/himadri-sharma-5569912a5", github: "https://github.com/himadritech21" } },
+    { name: "Dakshita Singh", role: "Dev Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/dakshita-singh-b2421b383/", github: "https://github.com/dakshita-singh-codes" } },
+    { name: "Niyati Jain", role: "Dev Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/niyati-jain-792808385/", github: "https://github.com/niy-ati" } },
+    { name: "Sandhya Singh", role: "Dev Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/sandhya-singh-3019832a4/" } },
+    { name: "Ankit Kumar Singh", role: "Dev Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ankit-kumar-singh-927a81381", github: "https://github.com/ankit3890" } },
+    { name: "Aalishba Khan", role: "Dev Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/aalishba-khan-45758a27a/", github: "https://github.com/aalishba-7" } },
+    { name: "Ashwani Kumar Jaiswal", role: "Dev Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ashwanikumarj94/", github: "https://github.com/heyy-ashwani" } },
+];
+
+const openSourceTeam = [
+    { name: "Shubhangi Srivastava", role: "Open Source Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/shubhangi-srivastava-436861380", github: "https://github.com/shubhangi-1010" } },
+    { name: "Anushka Gupta", role: "Open Source Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/anushka-gupta-616515329/", github: "https://github.com/anushkagupta200615-jpg" } },
+    { name: "Chirag Gupta", role: "Open Source Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/chirag-gupta-aa3497379/", github: "https://github.com/chirag-gupta-07" } },
+    { name: "Rishu Soni Poddar", role: "Open Source Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/rishu-soni-207694325/", github: "https://github.com/Rishu-Soni" } },
+];
+
+// ==========================================
+// 3. CREATIVES SUBDOMAINS
+// ==========================================
+const editingTeam = [
+    { name: "Raj Ojha", role: "Editing Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/raj-ojha-14a991327/", github: "https://github.com/raj-ojha" } },
+    { name: "Devang Mishra", role: "Editing Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/devang-mishra-04a8a4381", github: "https://github.com/devang738" } },
+];
+
+const photoVideoTeam = [
+    { name: "Arjun", role: "Media Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/arjun-deo-singh-66ba65381/", github: "https://github.com/intruder1516y" } },
+];
+
+const graphicsSubTeam = [
+    { name: "Kishan Singh", role: "Graphics Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/kishansingh7x/", github: "https://github.com/kishansingh7x" } },
+    { name: "Tooba Ashfaque", role: "Graphics Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/tooba-ashfaque/", github: "https://github.com/too-baa" } },
+];
+
+const contentWritingTeam: any[] = [
+    // Add Content Writing team members here
+];
+
+// ==========================================
+// 4. OTHER DOMAINS
+// ==========================================
 const eventTeam = [
     { name: "Ravi Kishan", role: "Event Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/ravi-kishan-a880a5328", github: "https://github.com/RAVI-KISHAN-ui" } },
     { name: "Suryank Batham", role: "Event Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/suryank-batham-814544328/", github: "https://github.com/SuryankB" } },
@@ -38,44 +101,10 @@ const eventTeam = [
     { name: "Aryan Singh", role: "Event Team", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/aryan-singh-91ba69381/", github: "https://github.com/ARYANSINGH926" } },
 ];
 
-const graphicsTeam = [
-    { name: "Raj Ojha", role: "Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/raj-ojha-14a991327/", github: "https://www.linkedin.com/in/raj-ojha-14a9" } },
-    { name: "Kishan Singh", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/kishansingh7x/", github: "https://github.com/kishansingh7x" } },
-    { name: "Arjun", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/arjun-deo-singh-66ba65381/", github: "https://github.com/intruder1516y" } },
-    { name: "Tooba Ashfaque", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/tooba-ashfaque/", github: "https://github.com/too-baa" } },
-    { name: "Devang Mishra", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/devang-mishra-04a8a4381", github: "https://github.com/devang738" } },
-];
-
 const prTeam = [
     { name: "Rudrika Singhal", role: "Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/rudrika-singhal-74a705328/" } },
     { name: "Lucky Diwakar", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/lucky-diwakar-8b7713381/", github: "https://github.com/Lucky947-git" } },
     { name: "Chirag Tejasvi", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/chirag-tejasvi-939581376/", github: "https://github.com/pathfinder1one" } },
-];
-
-const technicalTeam = [
-    { name: "Himadri Sharma", role: "Member", bio: "3rd Year", socials: { linkedin: "https://www.linkedin.com/in/himadri-sharma-5569912a5", github: "https://github.com/himadritech21" } },
-    { name: "Vaishnavi Mishra", role: "Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/vsnvi11/", github: "https://github.com/the11dev" } },
-    { name: "Sarthak Sharma", role: "Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/sarthaksharmakiet", github: "https://github.com/Sarthak752008" } },
-    { name: "Akshit Vats", role: "Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/akshitvats026", github: "https://github.com/Akshitvats026" } },
-    { name: "Kartikey Kumar", role: "Member", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/er-kk/", github: "https://github.com/kartikey-kk" } },
-    { name: "Dakshita Singh", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/dakshita-singh-b2421b383/", github: "https://github.com/dakshita-singh-codes" } },
-    { name: "Niyati Jain", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/niyati-jain-792808385/", github: "https://github.com/niy-ati" } },
-    { name: "Sandhya Singh", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/sandhya-singh-3019832a4/" } },
-    { name: "Ankit Kumar Singh", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ankit-kumar-singh-927a81381", github: "https://github.com/ankit3890" } },
-    { name: "Divyansh Maheshwari", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/divyansh-maheshwari-6493b2381/", github: "https://github.com/divyanshmaheshwari617-cell" } },
-    { name: "Ayush Pathak", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ayush-pathak-0988b3381/", github: "https://github.com/ayushpathak-957" } },
-    { name: "Aalishba Khan", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/aalishba-khan-45758a27a/", github: "https://github.com/aalishba-7" } },
-    { name: "Ashwani Kumar Jaiswal", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ashwanikumarj94/", github: "https://github.com/heyy-ashwani" } },
-    { name: "Shubhangi Srivastava", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/shubhangi-srivastava-436861380", github: "https://github.com/shubhangi-1010" } },
-    { name: "Aman Chaudhary", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/aman-chaudhary-076216382/", github: "https://github.com/AmanAsh-207" } },
-    { name: "Anushka Gupta", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/anushka-gupta-616515329/", github: "https://github.com/anushkagupta200615-jpg" } },
-    { name: "Chirag Gupta", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/chirag-gupta-aa3497379/", github: "https://github.com/chirag-gupta-07" } },
-    { name: "Atul Kushwaha", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/atul-kushwaha-9b0290381/", github: "https://github.com/atulkushwaha0112-py" } },
-    { name: "Khushi Tripathi", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/khushi-tripathi-b6117636a/", github: "https://github.com/KhushiTripathi762" } },
-    { name: "Rishu Soni Poddar", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/rishu-soni-207694325/", github: "https://github.com/Rishu-Soni" } },
-    { name: "Garima Singh", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/garima-singh-715929382/", github: "https://github.com/garimasingh4448-code" } },
-    { name: "Ritik Chaudhary", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/ritik-chaudhary-2kk7/", github: "https://github.com/Ritik-AIML" } },
-    { name: "Akansh Dwivedi", role: "Member", bio: "1st Year", socials: { linkedin: "https://www.linkedin.com/in/akansh-dwivedi-b79501355/", github: "https://github.com/Akanshdwi" } },
 ];
 
 const treasurerTeam = [
@@ -85,16 +114,102 @@ const treasurerTeam = [
     { name: "Deepak Joshi", role: "Treasurer Team", bio: "2nd Year", socials: { linkedin: "https://www.linkedin.com/in/deepak-joshi-23a42a327/", github: "https://github.com/Deepak-Joshii" } },
 ];
 
-const domains = [
-    { id: "technical", title: "Technical Domain", members: technicalTeam, color: "from-blue-500/20 to-cyan-500/20", borderColor: "group-hover:border-cyan-500/50" },
-    { id: "event", title: "Event Management", members: eventTeam, color: "from-purple-500/20 to-pink-500/20", borderColor: "group-hover:border-purple-500/50" },
-    { id: "graphics", title: "Graphics & Design", members: graphicsTeam, color: "from-green-500/20 to-emerald-500/20", borderColor: "group-hover:border-[#4DBC1B]/50" },
-    { id: "pr", title: "Public Relations", members: prTeam, color: "from-orange-500/20 to-red-500/20", borderColor: "group-hover:border-orange-500/50" },
-    { id: "treasurer", title: "Treasury & Finance", members: treasurerTeam, color: "from-yellow-500/20 to-amber-500/20", borderColor: "group-hover:border-yellow-500/50" },
+// ==========================================
+// 5. DOMAIN STRUCTURE CONFIGURATION
+// ==========================================
+interface Subdomain {
+    id: string;
+    title: string;
+    members: any[];
+}
+
+interface DomainConfig {
+    id: string;
+    title: string;
+    color: string;
+    borderColor: string;
+    members?: any[];
+    subdomains?: Subdomain[];
+}
+
+const domains: DomainConfig[] = [
+    {
+        id: "technical",
+        title: "Technical Domain",
+        color: "from-blue-500/20 to-cyan-500/20",
+        borderColor: "group-hover:border-cyan-500/50",
+        subdomains: [
+            { id: "aiml", title: "AIML", members: aimlTeam },
+            { id: "dsa-cp", title: "DSA / CP", members: dsaCpTeam },
+            { id: "development", title: "Development", members: developmentTeam },
+            { id: "opensource", title: "Open Source", members: openSourceTeam },
+        ],
+    },
+    {
+        id: "creatives",
+        title: "Creatives",
+        color: "from-green-500/20 to-emerald-500/20",
+        borderColor: "group-hover:border-[#4DBC1B]/50",
+        subdomains: [
+            { id: "editing", title: "Editing", members: editingTeam },
+            { id: "photo-video", title: "Photography & Videography", members: photoVideoTeam },
+            { id: "graphics", title: "Graphics", members: graphicsSubTeam },
+            { id: "content-writing", title: "Content Writing", members: contentWritingTeam },
+        ],
+    },
+    {
+        id: "event",
+        title: "Event Management",
+        members: eventTeam,
+        color: "from-purple-500/20 to-pink-500/20",
+        borderColor: "group-hover:border-purple-500/50",
+    },
+    {
+        id: "pr",
+        title: "Public Relations",
+        members: prTeam,
+        color: "from-orange-500/20 to-red-500/20",
+        borderColor: "group-hover:border-orange-500/50",
+    },
+    {
+        id: "treasurer",
+        title: "Treasury & Finance",
+        members: treasurerTeam,
+        color: "from-yellow-500/20 to-amber-500/20",
+        borderColor: "group-hover:border-yellow-500/50",
+    },
 ];
 
-function DomainSection({ title, members, color, borderColor }: { title: string, members: any[], color: string, borderColor: string }) {
+// ==========================================
+// 6. DOMAIN SECTION COMPONENT
+// ==========================================
+function DomainSection({
+    title,
+    members,
+    subdomains,
+    color,
+    borderColor,
+}: {
+    title: string;
+    members?: any[];
+    subdomains?: Subdomain[];
+    color: string;
+    borderColor: string;
+}) {
     const [isOpen, setIsOpen] = useState(false);
+    const [activeSubdomain, setActiveSubdomain] = useState<string>("all");
+
+    // Total count calculation
+    const totalMembersCount = subdomains
+        ? subdomains.reduce((acc, sub) => acc + sub.members.length, 0)
+        : members?.length || 0;
+
+    // Filter members depending on selected subdomain
+    const displayedMembers = subdomains
+        ? activeSubdomain === "all"
+            ? subdomains.flatMap((sub) => sub.members)
+            : subdomains.find((sub) => sub.id === activeSubdomain)?.members || []
+        : members || [];
 
     return (
         <div className="mb-6 md:mb-8 w-full">
@@ -110,7 +225,7 @@ function DomainSection({ title, members, color, borderColor }: { title: string, 
                             {title}
                         </h3>
                         <span className="text-xs md:text-sm font-medium text-gray-400 uppercase tracking-widest">
-                            {members.length} Members
+                            {totalMembersCount} Members
                         </span>
                     </div>
 
@@ -129,12 +244,42 @@ function DomainSection({ title, members, color, borderColor }: { title: string, 
                         transition={{ duration: 0.4, ease: "easeInOut" }}
                         className="overflow-hidden"
                     >
+                        {/* Subdomain Filter Tabs (if domain has subdomains) */}
+                        {subdomains && subdomains.length > 0 && (
+                            <div className="pt-6 flex flex-wrap gap-2 md:gap-3 items-center">
+                                <button
+                                    onClick={() => setActiveSubdomain("all")}
+                                    className={`px-4 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                                        activeSubdomain === "all"
+                                            ? "bg-[#4DBC1B] text-black shadow-[0_0_15px_rgba(77,188,27,0.4)]"
+                                            : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10"
+                                    }`}
+                                >
+                                    All ({totalMembersCount})
+                                </button>
+                                {subdomains.map((sub) => (
+                                    <button
+                                        key={sub.id}
+                                        onClick={() => setActiveSubdomain(sub.id)}
+                                        className={`px-4 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                                            activeSubdomain === sub.id
+                                                ? "bg-[#4DBC1B] text-black shadow-[0_0_15px_rgba(77,188,27,0.4)]"
+                                                : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10"
+                                        }`}
+                                    >
+                                        {sub.title} ({sub.members.length})
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Member Cards Grid */}
                         <div className="pt-6 md:pt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
-                            {members.map((member, index) => (
+                            {displayedMembers.map((member, index) => (
                                 <TeamMemberCard
-                                    key={index}
+                                    key={`${member.name}-${index}`}
                                     {...member}
-                                    delay={index * 0.05}
+                                    delay={index * 0.04}
                                 />
                             ))}
                         </div>
@@ -145,6 +290,9 @@ function DomainSection({ title, members, color, borderColor }: { title: string, 
     );
 }
 
+// ==========================================
+// 7. MAIN PAGE COMPONENT
+// ==========================================
 export default function TeamPage() {
     const { scrollTo } = useScrollContext();
     const [showTop, setShowTop] = useState(false);
@@ -154,6 +302,7 @@ export default function TeamPage() {
         window.addEventListener("scroll", onScroll, { passive: true });
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
+
     return (
         <main className="min-h-screen bg-black text-white selection:bg-[#4DBC1B]/30 relative">
             <Navbar />
@@ -213,6 +362,7 @@ export default function TeamPage() {
                             key={domain.id}
                             title={domain.title}
                             members={domain.members}
+                            subdomains={domain.subdomains}
                             color={domain.color}
                             borderColor={domain.borderColor}
                         />
@@ -231,7 +381,7 @@ export default function TeamPage() {
                         exit={{ opacity: 0, scale: 0.8 }}
                         transition={{ duration: 0.3 }}
                         onClick={() => scrollTo(0, { duration: 1.4 })}
-                        className="fixed bottom-8 right-6 z-50 p-3 rounded-full bg-[#4DBC1B]/20 border border-[#4DBC1B]/50 text-[#4DBC1B] hover:bg-[#4DBC1B]/30 hover:shadow-[0_0_20px_rgba(77,188,27,0.4)] transition-all duration-300"
+                        className="fixed bottom-8 right-6 z-50 p-3 rounded-full bg-[#4DBC1B]/20 border border-[#4DBC1B]/50 text-[#4DBC1B] hover:bg-[#4DBC1B]/30 hover:shadow-[0_0_20px_rgba(77,188,27,0.4)] transition-all duration-300 cursor-pointer"
                         aria-label="Scroll to top"
                     >
                         <ChevronUp className="w-5 h-5" />
