@@ -1,15 +1,13 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, useCallback } from "react";
-import Lenis from "lenis";
+import React, { createContext, useContext, useCallback } from "react";
 
-// ─── Context ────────────────────────────────────────────────────────────────
-
+// Context 
 type ScrollTarget = string | HTMLElement | number;
 
 interface ScrollContextValue {
     scrollTo: (target: ScrollTarget, options?: { offset?: number; duration?: number }) => void;
-    lenis: React.MutableRefObject<Lenis | null>;
+    lenis: { current: null };
 }
 
 const ScrollContext = createContext<ScrollContextValue>({
@@ -21,52 +19,33 @@ export function useScrollContext() {
     return useContext(ScrollContext);
 }
 
-// ─── Provider ────────────────────────────────────────────────────────────────
-
+//  Provider (Zero-Lag Native Engine) 
 export default function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
-    const lenisRef = useRef<Lenis | null>(null);
-    const rafRef = useRef<number | null>(null);
-
-    useEffect(() => {
-        const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            orientation: "vertical",
-            gestureOrientation: "vertical",
-            smoothWheel: true,
-            // smoothTouch is not in LenisOptions for v1.x — native touch scroll is used on mobile
-            touchMultiplier: 1.5,
-        });
-
-        lenisRef.current = lenis;
-
-        function raf(time: number) {
-            lenis.raf(time);
-            rafRef.current = requestAnimationFrame(raf);
-        }
-
-        rafRef.current = requestAnimationFrame(raf);
-
-        return () => {
-            if (rafRef.current) cancelAnimationFrame(rafRef.current);
-            lenis.destroy();
-        };
-    }, []);
-
     const scrollTo = useCallback(
-        (target: ScrollTarget, options: { offset?: number; duration?: number } = {}) => {
-            if (!lenisRef.current) return;
-            lenisRef.current.scrollTo(target as any, {
-                offset: options.offset ?? 0,
-                duration: options.duration ?? 1.2,
-                easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            });
+        (target: ScrollTarget, options: { offset?: number } = {}) => {
+            const offset = options.offset ?? 0;
+
+            if (typeof target === "number") {
+                window.scrollTo({
+                    top: target + offset,
+                    behavior: "smooth",
+                });
+            } else if (typeof target === "string") {
+                const el = document.querySelector(target);
+                if (el) {
+                    const top = el.getBoundingClientRect().top + window.scrollY + offset;
+                    window.scrollTo({ top, behavior: "smooth" });
+                }
+            } else if (target instanceof HTMLElement) {
+                const top = target.getBoundingClientRect().top + window.scrollY + offset;
+                window.scrollTo({ top, behavior: "smooth" });
+            }
         },
         []
     );
 
     return (
-        <ScrollContext.Provider value={{ scrollTo, lenis: lenisRef }}>
+        <ScrollContext.Provider value={{ scrollTo, lenis: { current: null } }}>
             {children}
         </ScrollContext.Provider>
     );

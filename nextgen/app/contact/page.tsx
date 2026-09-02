@@ -8,8 +8,8 @@ import {
   Mail,
   Linkedin,
   Github,
+  Instagram,
   MapPin,
-  MessageSquare,
   Sparkles,
   Users,
   Code2,
@@ -64,16 +64,16 @@ const networkNodes: NetworkNode[] = [
     connections: ["opensource", "email", "community"],
   },
   {
-    id: "discord",
-    label: "Discord",
-    category: "community",
+    id: "instagram",
+    label: "Instagram",
+    category: "social",
     x: 50,
     y: 45,
     size: 26,
-    icon: MessageSquare,
-    value: "NextGen SuperComputing",
-    href: "https://discord.com/channels/1532507711634145412/1532507712255037576",
-    description: "Join our active developer and student researcher chat.",
+    icon: Instagram,
+    value: "@nextgen.kiet",
+    href: "https://www.instagram.com/nextgen.kiet/",
+    description: "Follow event highlights, behind-the-scenes, reels, and tech updates.",
     connections: ["github", "linkedin", "community", "workshops"],
   },
   {
@@ -87,7 +87,7 @@ const networkNodes: NetworkNode[] = [
     value: "NextGen SuperComputing",
     href: "https://www.linkedin.com/company/nextgen-supercomputing/",
     description: "Follow news, events, and industry career milestones.",
-    connections: ["discord", "partnerships", "location"],
+    connections: ["instagram", "partnerships", "location"],
   },
   {
     id: "research",
@@ -126,7 +126,7 @@ const networkNodes: NetworkNode[] = [
     value: "Hands-on GPU Labs",
     href: "mailto:dgxcoe@kiet.edu?subject=Workshop%20Inquiry",
     description: "Enroll or sponsor specialized parallel computing bootcamps.",
-    connections: ["research", "discord", "community"],
+    connections: ["research", "instagram", "community"],
   },
   {
     id: "opensource",
@@ -150,9 +150,9 @@ const networkNodes: NetworkNode[] = [
     size: 22,
     icon: Users,
     value: "Student Innovators",
-    href: "https://discord.com/channels/1532507711634145412/1532507712255037576",
+    href: "https://www.instagram.com/nextgen.kiet/",
     description: "Engage with curious minds building supercomputing projects.",
-    connections: ["discord", "workshops"],
+    connections: ["instagram", "workshops"],
   },
   {
     id: "sponsorship",
@@ -340,10 +340,11 @@ export default function ContactPage() {
                 >
                   {/* Outer Pulsing Aura */}
                   <div
-                    className={`relative rounded-full flex items-center justify-center transition-all duration-500 ${isActive
+                    className={`relative rounded-full flex items-center justify-center transition-all duration-500 ${
+                      isActive
                         ? "bg-[#4DBC1B] text-black shadow-[0_0_35px_#4DBC1B] border-2 border-[#4DBC1B]"
                         : "bg-black/80 text-[#4DBC1B] border border-[#4DBC1B]/40 hover:border-[#4DBC1B] hover:shadow-[0_0_20px_rgba(77,188,27,0.4)]"
-                      }`}
+                    }`}
                     style={{
                       width: `${node.size * 2}px`,
                       height: `${node.size * 2}px`,
@@ -359,8 +360,9 @@ export default function ContactPage() {
 
                   {/* Node Label underneath */}
                   <span
-                    className={`absolute left-1/2 -translate-x-1/2 mt-2 text-[10px] sm:text-xs font-bold tracking-wider whitespace-nowrap transition-colors duration-300 ${isActive ? "text-[#4DBC1B]" : "text-gray-400 group-hover:text-white"
-                      }`}
+                    className={`absolute left-1/2 -translate-x-1/2 mt-2 text-[10px] sm:text-xs font-bold tracking-wider whitespace-nowrap transition-colors duration-300 ${
+                      isActive ? "text-[#4DBC1B]" : "text-gray-400 group-hover:text-white"
+                    }`}
                   >
                     {node.label}
                   </span>
@@ -492,7 +494,7 @@ export default function ContactPage() {
               {[
                 { icon: Mail, label: "Email", val: "dgxcoe@kiet.edu", href: "mailto:dgxcoe@kiet.edu" },
                 { icon: Github, label: "GitHub", val: "nextgen-supercomputing", href: "https://github.com" },
-                { icon: MessageSquare, label: "Discord", val: "NextGen SuperComputing", href: "https://discord.com/channels/1532507711634145412/1532507712255037576" },
+                { icon: Instagram, label: "Instagram", val: "@nextgen.kiet", href: "https://www.instagram.com/nextgen.kiet/" }, // 👈 Updated here
                 { icon: Linkedin, label: "LinkedIn", val: "NextGen SuperComputing", href: "https://www.linkedin.com/company/nextgen-supercomputing/" },
                 { icon: MapPin, label: "Location", val: "KIET Deemed to be University, Ghaziabad", href: "#" },
               ].map((item) => (
